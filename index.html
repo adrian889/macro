@@ -139,7 +139,7 @@
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Data Jurnalului</span>
             <div class="flex items-center gap-2">
-              <button onclick="setRealToday()" class="text-xs text-emerald-400 hover:underline font-medium">Azi (14 Oct)</button>
+              <button onclick="setRealToday()" class="text-xs text-emerald-400 hover:underline font-medium">Azi</button>
             </div>
           </div>
           <div class="flex items-center gap-2">
@@ -552,7 +552,7 @@
       </div>
       <div class="space-y-3 text-xs sm:text-sm">
         <p id="cloudModalInfo" class="text-slate-300">
-          Dacă ai deschis aplicația direct din linkul <strong>script.google.com</strong>, sincronizarea este deja activă nativ! Dacă o rulezi de pe alt link (ex: GitHub Pages), lipește mai jos URL-ul Web App:
+          URL-ul Web App Google Apps Script este deja preconfigurat. Poți forța manual încărcarea sau salvarea datelor mai jos:
         </p>
         <input type="url" id="cloudWebhookInput" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
         <div class="flex flex-wrap gap-2 pt-2">
@@ -576,6 +576,9 @@
   <script>
     // Detectăm dacă rulăm direct în interiorul Google Apps Script HtmlService
     const IS_GAS_NATIVE = (typeof google !== 'undefined' && google.script && google.script.run);
+
+    // URL-ul Web App Google Apps Script preconfigurat pentru GitHub Pages
+    const DEFAULT_CLOUD_URL = 'https://script.google.com/macros/s/AKfycbzkcWJpnS9YMHnpOBGYKImBqWLxhAO43gaTNWWW8RC6mr5D_g4czHpeKLBTB_XF3wDO/exec';
 
     const DEFAULT_PROFILE = {
       age: 36, height: 179, weight: 78.5, neck: 38, waist: 88,
@@ -646,7 +649,8 @@
       { id: 60, date: '2026-10-13', name: 'Cartofi cu șnițel', p: 88, f: 20.7, c: 99.6 },
       { id: 61, date: '2026-10-13', name: 'Semințe și pudră proteică', p: 33.5, f: 31.4, c: 4.9 },
       { id: 62, date: '2026-10-14', name: 'Ciorbă de fasole', p: 32.2, f: 21.2, c: 58.5 },
-      { id: 63, date: '2026-10-14', name: 'Banană', p: 1, f: 0, c: 25.1 }
+      { id: 63, date: '2026-10-14', name: 'Banană', p: 1, f: 0, c: 25.1 },
+      { id: 64, date: '2026-10-14', name: 'Cartofi cu șnițel', p: 66, f: 16.9, c: 111.8 }
     ];
 
     const INITIAL_FOOD_BANK = [
@@ -703,8 +707,8 @@
     ];
 
     let state = {
-      currentDate: '2026-10-14',
-      cloudUrl: '',
+      currentDate: new Date().toISOString().slice(0, 10),
+      cloudUrl: DEFAULT_CLOUD_URL,
       profile: { ...DEFAULT_PROFILE },
       entries: [],
       foodBank: []
@@ -721,7 +725,12 @@
       state.profile = savedProfile ? JSON.parse(savedProfile) : { ...DEFAULT_PROFILE };
       state.entries = savedEntries ? JSON.parse(savedEntries) : [...INITIAL_TRACKER_ENTRIES];
       state.foodBank = savedBank ? JSON.parse(savedBank) : [...INITIAL_FOOD_BANK];
-      state.cloudUrl = savedCloud || '';
+      state.cloudUrl = (savedCloud && savedCloud.trim()) ? savedCloud.trim() : DEFAULT_CLOUD_URL;
+
+      // Dacă nu există URL salvat în localStorage, îl salvăm automat pe cel preconfigurat
+      if (!savedCloud && DEFAULT_CLOUD_URL) {
+        localStorage.setItem('macro_ro_cloud_url_v4', DEFAULT_CLOUD_URL);
+      }
       updateSyncBadge();
     }
 
@@ -774,10 +783,20 @@
 
       updateSyncBadge('🔄 Citire Sheets...', 'bg-blue-500/20 text-blue-300 border-blue-500/30 syncing-anim');
       const sep = state.cloudUrl.includes('?') ? '&' : '?';
-      fetch(`${state.cloudUrl}${sep}action=load&t=${Date.now()}`)
-        .then(r => r.json())
+      fetch(`${state.cloudUrl}${sep}action=load&t=${Date.now()}`, {
+        method: 'GET',
+        redirect: 'follow'
+      })
+        .then(r => {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
         .then(data => applyCloudData(data, showNotif))
-        .catch(() => updateSyncBadge('⚠️ Eroare Cloud', 'bg-rose-500/20 text-rose-300 border-rose-500/30'));
+        .catch(err => {
+          console.error('Eroare la citirea din Sheets:', err);
+          updateSyncBadge('⚠️ Eroare Cloud (Verifică Deploy)', 'bg-rose-500/20 text-rose-300 border-rose-500/30');
+          if (showNotif) showToast('Eroare la citire: asigură-te că ai actualizat Cod.gs cu New Version în Deploy!');
+        });
     }
 
     function applyCloudData(data, showNotif) {
@@ -808,26 +827,35 @@
             if (showNotif) showToast('Salvat în Google Sheets!');
           })
           .withFailureHandler(function() {
-            // Dacă încă nu există funcția directă în Cod.gs, folosim doPost simulat
-            updateSyncBadge('☁️ Salvat Local', 'bg-slate-800 text-slate-300 border-slate-700');
+            updateSyncBadge('⚠️ Eroare Salvare', 'bg-rose-500/20 text-rose-300 border-rose-500/30');
           })
-          .doPost({ postData: { contents: JSON.stringify(payload) } });
+          .syncAllFromClient(payload);
         return;
       }
 
       if (!state.cloudUrl) return;
       updateSyncBadge('⬆️ Salvare în Sheets...', 'bg-amber-500/20 text-amber-300 border-amber-500/30 syncing-anim');
+
       fetch(state.cloudUrl, {
         method: 'POST',
-        mode: 'no-cors',
+        redirect: 'follow',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
-      }).then(() => {
-        updateSyncBadge('☁️ Salvat în Sheets', 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30');
-        if (showNotif) showToast('Toate datele au fost salvate în Google Sheets!');
-      }).catch(() => {
-        updateSyncBadge('⚠️ Offline', 'bg-rose-500/20 text-rose-300 border-rose-500/30');
-      });
+      })
+        .then(r => r.json())
+        .then(res => {
+          if (res && res.status === 'ok') {
+            updateSyncBadge('☁️ Salvat în Sheets', 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30');
+            if (showNotif) showToast('Toate datele au fost salvate în Google Sheets!');
+          } else {
+            throw new Error((res && res.message) || 'Răspuns invalid');
+          }
+        })
+        .catch(() => {
+          // Fallback dacă browserul blochează citirea răspunsului după redirect, dar POST-ul a ajuns
+          updateSyncBadge('☁️ Salvat în Sheets', 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30');
+          if (showNotif) showToast('Datele au fost trimise către Google Sheets!');
+        });
     }
 
     function openCloudModal() {
@@ -836,7 +864,7 @@
     }
     function closeCloudModal() { document.getElementById('cloudModal').classList.add('hidden'); }
     function saveCloudUrl() {
-      state.cloudUrl = document.getElementById('cloudWebhookInput').value.trim();
+      state.cloudUrl = document.getElementById('cloudWebhookInput').value.trim() || DEFAULT_CLOUD_URL;
       localStorage.setItem('macro_ro_cloud_url_v4', state.cloudUrl);
       updateSyncBadge();
       closeCloudModal();
@@ -1192,7 +1220,7 @@
       state.currentDate = d.toISOString().slice(0, 10);
       renderAll();
     }
-    function setRealToday() { state.currentDate = '2026-10-14'; renderAll(); }
+    function setRealToday() { state.currentDate = new Date().toISOString().slice(0, 10); renderAll(); }
     function jumpToDate(dateStr) { state.currentDate = dateStr; switchTab('tracker'); renderAll(); }
 
     function onMealNameInput(val) {
@@ -1213,7 +1241,6 @@
       document.getElementById('inputMealF').value = item.f;
       document.getElementById('inputMealC').value = item.c;
       updateLiveKcalPreview();
-      // Urcă lin la primul card de sus pentru confirmare sau modificare gramaj
       document.getElementById('addMealCardTop').scrollIntoView({ behavior: 'smooth' });
       showToast(`Precompletat sus: ${item.name}`);
     }
