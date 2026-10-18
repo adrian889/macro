@@ -44,7 +44,6 @@
     @keyframes pulseSync { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     .syncing-anim { animation: pulseSync 1.2s infinite; }
 
-    /* Carduri cu gradient subtil si efect de adancime */
     .glass-card {
       background: linear-gradient(145deg, rgba(17, 25, 42, 0.92) 0%, rgba(10, 15, 27, 0.96) 100%);
       backdrop-filter: blur(12px);
@@ -123,7 +122,7 @@
           </div>
           <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer select-none hover:text-white transition">
             <input type="checkbox" id="saveToBankCheck" class="rounded bg-slate-950 border-slate-700 text-emerald-500 focus:ring-0" />
-            <span>Salvează și în Banca de Alimente</span>
+            <span>Salvează / actualizează în Banca de Alimente</span>
           </label>
         </div>
 
@@ -166,7 +165,8 @@
         <div class="lg:col-span-4 glass-card border border-slate-800/90 rounded-2xl p-4 flex flex-col justify-between shadow-lg">
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Data Jurnalului</span>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-3">
+              <button onclick="copyYesterdayMeals()" class="text-xs text-blue-400 hover:text-blue-300 hover:underline font-medium" title="Copiază toate mesele din ziua anterioară în ziua selectată">📥 Copiază ieri</button>
               <button onclick="setRealToday()" class="text-xs text-emerald-400 hover:text-emerald-300 hover:underline font-semibold">Azi</button>
             </div>
           </div>
@@ -183,7 +183,7 @@
           </div>
         </div>
 
-        <!-- Carduri Macro & Calorii Zi Curentă (Fără badge-urile cu minus) -->
+        <!-- Carduri Macro & Calorii Zi Curentă -->
         <div class="lg:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-3">
           
           <!-- Calorii -->
@@ -317,12 +317,12 @@
 
     <!-- ==================== TAB 2: BANCĂ ALIMENTE ==================== -->
     <section id="tab-banca" class="hidden space-y-6">
-      <div class="glass-card border border-slate-800/90 rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl relative overflow-hidden">
+      <div id="bankFormCard" class="glass-card border border-slate-800/90 rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl relative overflow-hidden">
         <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-emerald-500 via-teal-400 to-purple-500 opacity-80"></div>
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 class="text-sm sm:text-base font-bold text-white">Bancă de Alimente & Mese Recurente</h2>
-            <p class="text-xs text-slate-400">Consolidată din Arhivă și Tracker. Poți adăuga direct în ziua activă sau precompleta formularul.</p>
+            <p class="text-xs text-slate-400">Consolidată din Arhivă și Tracker. Poți adăuga direct în ziua activă, precompleta sau edita orice card.</p>
           </div>
           <div class="flex items-center gap-2">
             <input type="text" id="bankSearchInput" oninput="renderFoodBank()" placeholder="🔍 Caută în bancă..." class="bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
@@ -339,8 +339,9 @@
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-12 gap-2.5 pt-2 border-t border-slate-800/80 items-end">
+          <input type="hidden" id="editBankId" value="" />
           <div class="col-span-2 sm:col-span-4">
-            <label class="block text-[11px] text-slate-400 mb-1">Denumire Masă / Aliment</label>
+            <label class="block text-[11px] text-slate-400 mb-1" id="bankFormTitleLabel">Denumire Masă / Aliment</label>
             <input type="text" id="newBankName" placeholder="Ex: Ciorbă de văcuță porție standard" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-3 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
           </div>
           <div class="col-span-2 sm:col-span-2">
@@ -366,9 +367,12 @@
             <label class="block text-[11px] text-purple-400 mb-1">C (g)</label>
             <input type="number" step="0.1" inputmode="decimal" id="newBankC" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purple-500" />
           </div>
-          <div class="col-span-1 sm:col-span-2">
-            <button onclick="addNewBankItem()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-semibold py-1.5 px-3 rounded-lg text-xs sm:text-sm transition shadow">
+          <div class="col-span-1 sm:col-span-2 flex gap-1.5">
+            <button id="saveBankBtn" onclick="saveOrUpdateBankItem()" class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-semibold py-1.5 px-3 rounded-lg text-xs sm:text-sm transition shadow">
               + Salvează în Bancă
+            </button>
+            <button id="cancelBankEditBtn" onclick="cancelBankEdit()" class="hidden bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-1.5 px-2.5 rounded-lg text-xs transition" title="Anulează editarea">
+              ✕
             </button>
           </div>
         </div>
@@ -385,7 +389,7 @@
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
             <div>
               <h2 class="font-bold text-base text-white">Parametri Biometrici & Multiplicatori (`Date`)</h2>
-              <p class="text-xs text-slate-400">Orice modificare recalculează instantaneu BMR, LBM și țintele zilnice.</p>
+              <p class="text-xs text-slate-400">Sincronizat direct cu foaia `Date` din Google Sheets.</p>
             </div>
             <button onclick="resetProfileDefaults()" class="text-xs text-slate-400 hover:text-emerald-400 underline transition">Resetează la valorile din Excel</button>
           </div>
@@ -417,7 +421,6 @@
             </div>
           </div>
 
-          <!-- Multiplicatori fără butoanele predefinite -->
           <div class="pt-3 border-t border-slate-800 space-y-3">
             <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Multiplicatori Energie & Macronutrienți</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -546,10 +549,7 @@
   <div id="toastBox" class="fixed bottom-5 right-5 z-50 hidden bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-950/70 text-xs sm:text-sm font-semibold"></div>
 
   <script>
-    // Detectăm dacă rulăm direct în interiorul Google Apps Script HtmlService
     const IS_GAS_NATIVE = (typeof google !== 'undefined' && google.script && google.script.run);
-
-    // URL-ul Web App Google Apps Script preconfigurat pentru GitHub Pages
     const DEFAULT_CLOUD_URL = 'https://script.google.com/macros/s/AKfycbyXhrRjzTkYYEGJNO1TTbdorwNnNI7Zw4xAZSvaeLyGdmb4Hl8vttwtpc6c_quzaTNN/exec';
 
     const DEFAULT_PROFILE = {
@@ -561,130 +561,30 @@
     const INITIAL_TRACKER_ENTRIES = [
       { id: 1, date: '2026-09-30', name: 'Omletă și carne plus cremă de brânză', p: 79.5, f: 34.2, c: 26.7 },
       { id: 2, date: '2026-09-30', name: 'Struguri', p: 2.2, f: 0.5, c: 56.1 },
-      { id: 3, date: '2026-09-30', name: 'Cremă de orez + pudră proteică + semințe', p: 64.1, f: 30.6, c: 103.1 },
-      { id: 4, date: '2026-10-01', name: 'Cereale Cini Minis (100g + 200ml)', p: 19.9, f: 7.3, c: 78.6 },
-      { id: 5, date: '2026-10-01', name: 'Stay strong Shake', p: 25, f: 1.8, c: 13 },
-      { id: 6, date: '2026-10-01', name: 'Cartofi prăjiți la cuptor cu pulpă de pui', p: 68.4, f: 37.4, c: 70.4 },
-      { id: 7, date: '2026-10-01', name: 'Iaurt cu fructe și semințe', p: 33.7, f: 18.3, c: 23 },
-      { id: 8, date: '2026-10-02', name: 'Cartofi copți cu carne și unt', p: 49.1, f: 39.4, c: 66.6 },
-      { id: 9, date: '2026-10-02', name: 'Banană', p: 1, f: 0, c: 25.1 },
-      { id: 10, date: '2026-10-02', name: 'Cereale Cini Minis (100g + 200ml)', p: 19.9, f: 7.3, c: 78.6 },
-      { id: 11, date: '2026-10-02', name: 'Fillet Burger KFC', p: 24, f: 12.7, c: 31.8 },
-      { id: 12, date: '2026-10-02', name: 'True Whey 30g', p: 22, f: 1.8, c: 2.7 },
-      { id: 13, date: '2026-10-03', name: 'Ouă cu iaurt si jamon', p: 64.7, f: 28.2, c: 27.9 },
-      { id: 14, date: '2026-10-03', name: 'Banană', p: 1, f: 0, c: 25.1 },
-      { id: 15, date: '2026-10-03', name: 'Banană', p: 1, f: 0, c: 25.1 },
-      { id: 16, date: '2026-10-03', name: 'Ciolan si piure Ikea', p: 55, f: 45, c: 28 },
-      { id: 17, date: '2026-10-03', name: 'Banană', p: 1, f: 0, c: 25.1 },
-      { id: 18, date: '2026-10-03', name: 'True Whey 30g', p: 22, f: 1.8, c: 2.7 },
-      { id: 19, date: '2026-10-04', name: 'Struguri', p: 0.8, f: 0.2, c: 30 },
-      { id: 20, date: '2026-10-04', name: 'Pizza', p: 44.3, f: 22.2, c: 107 },
-      { id: 21, date: '2026-10-04', name: 'Clătite cu budincă', p: 64, f: 25.9, c: 110.5 },
-      { id: 22, date: '2026-10-04', name: 'True Whey 30g', p: 22, f: 1.8, c: 2.7 },
-      { id: 23, date: '2026-10-05', name: 'Ouă cu pui', p: 50.6, f: 35.4, c: 16.3 },
-      { id: 24, date: '2026-10-05', name: 'Latte Machiato', p: 2.8, f: 1.3, c: 4 },
-      { id: 25, date: '2026-10-05', name: 'Clătite cu budincă', p: 64, f: 25.9, c: 110.5 },
-      { id: 26, date: '2026-10-05', name: 'Cremă de orez cu budincă', p: 23.5, f: 2.7, c: 55.2 },
-      { id: 27, date: '2026-10-06', name: 'Kfc Zinger', p: 23.5, f: 18, c: 35.5 },
-      { id: 28, date: '2026-10-06', name: 'Protein drink vanilla froo', p: 25, f: 1.25, c: 12.3 },
-      { id: 29, date: '2026-10-06', name: 'Piure cu șnițel', p: 87, f: 20, c: 77.3 },
-      { id: 30, date: '2026-10-06', name: 'Semințe și fructe', p: 10.4, f: 23.8, c: 40.4 },
-      { id: 31, date: '2026-10-07', name: 'Subway teriyaki', p: 46, f: 10.7, c: 68.5 },
-      { id: 32, date: '2026-10-07', name: 'Clătite cu budincă', p: 46.8, f: 17, c: 71.3 },
-      { id: 33, date: '2026-10-07', name: 'Ton cu iaurt', p: 34.2, f: 2.6, c: 18.3 },
-      { id: 34, date: '2026-10-07', name: 'Popcorn CinemaCity', p: 4.2, f: 17.1, c: 28.3 },
-      { id: 35, date: '2026-10-07', name: 'Semințe', p: 5, f: 15.3, c: 1 },
-      { id: 36, date: '2026-10-08', name: 'Ouă cu iaurt și șnițel', p: 50, f: 20.4, c: 19 },
-      { id: 37, date: '2026-10-08', name: 'Lattucino', p: 7.5, f: 3.75, c: 11 },
-      { id: 38, date: '2026-10-08', name: 'Strudel mere Luca', p: 3.5, f: 9.9, c: 38.5 },
-      { id: 39, date: '2026-10-08', name: 'True Whey 30g', p: 22, f: 1.8, c: 2.7 },
-      { id: 40, date: '2026-10-08', name: 'Piersică', p: 2.1, f: 0.6, c: 21.5 },
-      { id: 41, date: '2026-10-08', name: 'Sandvich Luca și Luca tradițional plus Jamon', p: 57.8, f: 27.4, c: 100.6 },
-      { id: 42, date: '2026-10-09', name: 'Cereale Cini Minis (100g + 200ml)', p: 19.9, f: 7.3, c: 78.6 },
-      { id: 43, date: '2026-10-09', name: 'True Whey 30g', p: 22, f: 1.8, c: 2.7 },
-      { id: 44, date: '2026-10-09', name: 'Cereale Chocapic 100g și 200ml lapte 1,5%', p: 19.8, f: 7.3, c: 78.1 },
-      { id: 45, date: '2026-10-09', name: 'True Whey 30g', p: 22, f: 1.8, c: 2.7 },
-      { id: 46, date: '2026-10-09', name: 'Ceafă și legume', p: 57.6, f: 51.6, c: 24 },
-      { id: 47, date: '2026-10-10', name: 'Cereale Cini Minis (100g + 200ml)', p: 19.9, f: 7.3, c: 78.6 },
-      { id: 48, date: '2026-10-10', name: 'True Whey 30g', p: 22, f: 1.8, c: 2.7 },
-      { id: 49, date: '2026-10-10', name: 'Ceafă și legume', p: 56.8, f: 46.8, c: 22.8 },
-      { id: 50, date: '2026-10-10', name: 'Cremă de orez cu proteine', p: 44.6, f: 6, c: 84.1 },
-      { id: 51, date: '2026-10-10', name: 'Piersică', p: 2.1, f: 0.6, c: 21.5 },
-      { id: 52, date: '2026-10-11', name: 'Omletă cu iaurt', p: 53.4, f: 30.6, c: 29.8 },
-      { id: 53, date: '2026-10-11', name: 'Paste Carbonara', p: 32, f: 45, c: 55 },
-      { id: 54, date: '2026-10-11', name: 'Pizza', p: 54.2, f: 23.8, c: 106 },
-      { id: 55, date: '2026-10-11', name: 'Suc mere', p: 0, f: 0, c: 32.8 },
-      { id: 56, date: '2026-10-12', name: 'Risotto cu ceafă', p: 48.8, f: 37.9, c: 62.8 },
-      { id: 57, date: '2026-10-12', name: 'Kfc strips plus fillet burger', p: 47.1, f: 25.7, c: 44.4 },
-      { id: 58, date: '2026-10-12', name: 'Cremă de orez cu proteine', p: 40, f: 2.5, c: 78.8 },
-      { id: 59, date: '2026-10-13', name: 'Cereale Cini Minis (100g + 200ml)', p: 19.9, f: 11.3, c: 78.6 },
-      { id: 60, date: '2026-10-13', name: 'Cartofi cu șnițel', p: 88, f: 20.7, c: 99.6 },
-      { id: 61, date: '2026-10-13', name: 'Semințe și pudră proteică', p: 33.5, f: 31.4, c: 4.9 },
-      { id: 62, date: '2026-10-14', name: 'Ciorbă de fasole', p: 32.2, f: 21.2, c: 58.5 },
-      { id: 63, date: '2026-10-14', name: 'Banană', p: 1, f: 0, c: 25.1 },
-      { id: 64, date: '2026-10-14', name: 'Cartofi cu șnițel', p: 66, f: 16.9, c: 111.8 }
+      { id: 3, date: '2026-09-30', name: 'Cremă de orez + pudră proteică + semințe', p: 64.1, f: 30.6, c: 103.1 }
     ];
 
     const INITIAL_FOOD_BANK = [
       { id: 'b1', name: 'True Whey 30g', cat: 'Suplimente & Shake', p: 22.0, f: 1.8, c: 2.7, freq: 25 },
-      { id: 'b2', name: 'True Whey 60g', cat: 'Suplimente & Shake', p: 44.0, f: 3.6, c: 5.4, freq: 4 },
-      { id: 'b3', name: 'Optimum Nutrition Whey Gold Standard (1 cupă)', cat: 'Suplimente & Shake', p: 24.0, f: 1.5, c: 3.0, freq: 12 },
-      { id: 'b4', name: 'Optimum Nutrition Whey Gold Standard (2 cupe)', cat: 'Suplimente & Shake', p: 48.0, f: 3.0, c: 6.0, freq: 15 },
-      { id: 'b5', name: 'Stay strong Shake', cat: 'Suplimente & Shake', p: 25.0, f: 1.8, c: 13.0, freq: 5 },
-      { id: 'b6', name: 'Protein drink vanilla froo', cat: 'Suplimente & Shake', p: 25.0, f: 1.25, c: 12.3, freq: 3 },
-      { id: 'b7', name: 'Mueller protein 400g', cat: 'Suplimente & Shake', p: 26.0, f: 6.8, c: 41.2, freq: 3 },
-      { id: 'b8', name: 'Budincă Ypro', cat: 'Suplimente & Shake', p: 20.0, f: 1.8, c: 11.4, freq: 3 },
       { id: 'b9', name: 'Cereale Cini Minis (100g + 200ml)', cat: 'Mic Dejun & Cereale', p: 19.9, f: 7.3, c: 78.6, freq: 26 },
-      { id: 'b10', name: 'Cini Minis protein 100g, 240ml lapte', cat: 'Mic Dejun & Cereale', p: 22.8, f: 13.2, c: 75.3, freq: 6 },
-      { id: 'b11', name: 'Cereale Chocapic 100g și 200ml lapte 1,5%', cat: 'Mic Dejun & Cereale', p: 19.8, f: 7.3, c: 78.1, freq: 6 },
-      { id: 'b12', name: 'Cereale Mr. Iron', cat: 'Mic Dejun & Cereale', p: 36.9, f: 17.3, c: 57.5, freq: 3 },
-      { id: 'b13', name: 'Clătite cu budincă', cat: 'Mic Dejun & Cereale', p: 64.0, f: 25.9, c: 110.5, freq: 8 },
-      { id: 'b14', name: 'Cremă de orez cu proteine', cat: 'Mic Dejun & Cereale', p: 44.6, f: 6.0, c: 84.1, freq: 5 },
-      { id: 'b15', name: 'Cremă de orez cu budincă', cat: 'Mic Dejun & Cereale', p: 23.5, f: 2.7, c: 55.2, freq: 3 },
-      { id: 'b16', name: 'Ouă cu iaurt si jamon', cat: 'Mic Dejun & Cereale', p: 64.7, f: 28.2, c: 27.9, freq: 4 },
-      { id: 'b17', name: 'Omletă cu iaurt', cat: 'Mic Dejun & Cereale', p: 53.4, f: 30.6, c: 29.8, freq: 4 },
-      { id: 'b18', name: 'Iaurt cu fructe (400g + 400g)', cat: 'Lactate & Boluri', p: 43.6, f: 8.0, c: 50.8, freq: 12 },
-      { id: 'b19', name: 'Iaurt cu fructe și semințe', cat: 'Lactate & Boluri', p: 33.7, f: 18.3, c: 23.0, freq: 5 },
-      { id: 'b20', name: 'Iaurt cu căpșuni și miere', cat: 'Lactate & Boluri', p: 34.6, f: 9.1, c: 67.3, freq: 6 },
-      { id: 'b21', name: 'Orez cu lapte Rizzo 400g', cat: 'Lactate & Boluri', p: 13.2, f: 10.0, c: 72.0, freq: 3 },
-      { id: 'b22', name: 'Cartofi cu șnițel', cat: 'Mese Gătite', p: 88.0, f: 20.7, c: 99.6, freq: 6 },
-      { id: 'b23', name: 'Piure cu șnițel', cat: 'Mese Gătite', p: 87.0, f: 20.0, c: 77.3, freq: 4 },
-      { id: 'b24', name: 'Șnițel cu almette și roșii', cat: 'Mese Gătite', p: 91.9, f: 43.2, c: 33.8, freq: 6 },
-      { id: 'b25', name: 'Ceafă și legume', cat: 'Mese Gătite', p: 57.6, f: 51.6, c: 24.0, freq: 5 },
-      { id: 'b26', name: 'Cartofi prăjiți la cuptor cu pulpă de pui', cat: 'Mese Gătite', p: 68.4, f: 37.4, c: 70.4, freq: 5 },
-      { id: 'b27', name: 'Cartofi copți cu piept de pui marinat', cat: 'Mese Gătite', p: 62.5, f: 21.0, c: 43.1, freq: 4 },
-      { id: 'b28', name: 'Pulpe de pui dezosate plus legume la cuptor', cat: 'Mese Gătite', p: 62.5, f: 23.6, c: 21.9, freq: 5 },
-      { id: 'b29', name: 'Ciorbă de văcuță', cat: 'Mese Gătite', p: 37.4, f: 10.6, c: 38.7, freq: 4 },
-      { id: 'b30', name: 'Ciorbă de fasole', cat: 'Mese Gătite', p: 32.2, f: 21.2, c: 58.5, freq: 4 },
-      { id: 'b31', name: 'Paste proteice cu vită și parmezam (479g)', cat: 'Mese Gătite', p: 57.1, f: 19.0, c: 51.0, freq: 4 },
-      { id: 'b32', name: 'Orez cu pui și legume', cat: 'Mese Gătite', p: 42.6, f: 25.5, c: 84.4, freq: 4 },
-      { id: 'b33', name: 'Ton cu iaurt', cat: 'Mese Gătite', p: 34.2, f: 2.6, c: 18.3, freq: 5 },
-      { id: 'b34', name: 'Salată de ton', cat: 'Mese Gătite', p: 34.6, f: 2.9, c: 16.4, freq: 4 },
-      { id: 'b35', name: 'Jamon 70g', cat: 'Mese Gătite', p: 22.4, f: 7.0, c: 1.0, freq: 4 },
-      { id: 'b36', name: 'Fillet Burger KFC', cat: 'Fast-Food & Oraș', p: 24.0, f: 12.7, c: 31.8, freq: 14 },
-      { id: 'b37', name: 'Kfc Zinger', cat: 'Fast-Food & Oraș', p: 23.5, f: 18.0, c: 35.5, freq: 5 },
-      { id: 'b38', name: 'Subway teriyaki', cat: 'Fast-Food & Oraș', p: 46.0, f: 10.7, c: 68.5, freq: 4 },
-      { id: 'b39', name: 'Pizza', cat: 'Fast-Food & Oraș', p: 44.3, f: 22.2, c: 107.0, freq: 6 },
-      { id: 'b40', name: 'Ciolan si piure Ikea', cat: 'Fast-Food & Oraș', p: 55.0, f: 45.0, c: 28.0, freq: 2 },
-      { id: 'b41', name: 'Strudel mere Luca', cat: 'Fast-Food & Oraș', p: 3.5, f: 9.9, c: 38.5, freq: 2 },
-      { id: 'b42', name: 'Banană', cat: 'Fructe & Gustări', p: 1.0, f: 0.0, c: 25.1, freq: 26 },
-      { id: 'b43', name: 'Piersică', cat: 'Fructe & Gustări', p: 2.1, f: 0.6, c: 21.5, freq: 9 },
-      { id: 'b44', name: 'Struguri', cat: 'Fructe & Gustări', p: 2.2, f: 0.5, c: 56.1, freq: 6 },
-      { id: 'b45', name: 'Nectarine', cat: 'Fructe & Gustări', p: 2.0, f: 0.0, c: 19.0, freq: 6 },
-      { id: 'b46', name: 'Latte Machiato', cat: 'Fructe & Gustări', p: 2.8, f: 1.3, c: 4.0, freq: 12 },
-      { id: 'b47', name: 'Semințe', cat: 'Fructe & Gustări', p: 5.0, f: 15.3, c: 1.0, freq: 7 },
-      { id: 'b48', name: '60g Caju', cat: 'Fructe & Gustări', p: 9.0, f: 28.2, c: 19.8, freq: 4 },
-      { id: 'b49', name: '30g Unt de Arahide', cat: 'Fructe & Gustări', p: 7.8, f: 16.2, c: 3.3, freq: 3 },
-      { id: 'b50', name: 'Suc mere', cat: 'Fructe & Gustări', p: 0.0, f: 0.0, c: 32.8, freq: 5 }
+      { id: 'b42', name: 'Banană', cat: 'Fructe & Gustări', p: 1.0, f: 0.0, c: 25.1, freq: 26 }
     ];
 
+    // Funcție utilitară pentru data locală în format YYYY-MM-DD (fără decalaj UTC)
+    function getLocalTodayStr() {
+      const now = new Date();
+      return new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 10);
+    }
+
     let state = {
-      currentDate: new Date().toISOString().slice(0, 10),
+      currentDate: getLocalTodayStr(),
       cloudUrl: DEFAULT_CLOUD_URL,
       profile: { ...DEFAULT_PROFILE },
       entries: [],
       foodBank: []
     };
+
+    let syncDebounceTimer = null;
 
     function loadState() {
       const savedProfile = localStorage.getItem('macro_ro_profile_v4');
@@ -709,9 +609,19 @@
       localStorage.setItem('macro_ro_bank_v4', JSON.stringify(state.foodBank));
     }
 
-    function saveState() {
+    // Salvare imediată (la adăugare/ștergere) sau cu debounce (la tastare în tabel/profil)
+    function saveState(useDebounce = false) {
       saveLocalOnly();
-      syncPushToSheets(false);
+      if (useDebounce) {
+        updateSyncBadge('⏳ Se salvează...', 'bg-amber-500/20 text-amber-300 border-amber-500/30');
+        clearTimeout(syncDebounceTimer);
+        syncDebounceTimer = setTimeout(() => {
+          syncPushToSheets(false);
+        }, 800);
+      } else {
+        clearTimeout(syncDebounceTimer);
+        syncPushToSheets(false);
+      }
     }
 
     function updateSyncBadge(text, classes) {
@@ -905,7 +815,7 @@
 
       const tbody = document.getElementById('trackerTableBody');
       if (dayEntries.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-500">Nicio masă adăugată pentru ${state.currentDate}. Introdu masa în primul card de sus!</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-500">Nicio masă adăugată pentru ${state.currentDate}. Introdu masa în primul card de sus sau apasă pe „📥 Copiază ieri”!</td></tr>`;
       } else {
         tbody.innerHTML = dayEntries.map((item, idx) => {
           const k = calcKcal(item.p, item.f, item.c);
@@ -930,7 +840,8 @@
               </td>
               <td class="py-2.5 px-2 sm:px-3 text-right font-bold text-emerald-400">${k}</td>
               <td class="py-2.5 px-3 sm:px-4 text-right whitespace-nowrap space-x-1">
-                <button onclick="saveEntryToBank('${item.id}')" title="Salvează în Bancă" class="text-xs px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">🏦</button>
+                <button onclick="duplicateEntry('${item.id}')" title="Duplică masa în ziua curentă" class="text-xs px-2 py-1 rounded bg-slate-800 hover:bg-emerald-900/60 text-emerald-300 transition">➕</button>
+                <button onclick="saveEntryToBank('${item.id}')" title="Salvează / Actualizează în Bancă" class="text-xs px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">🏦</button>
                 <button onclick="deleteEntry('${item.id}')" title="Șterge rândul" class="text-xs px-2 py-1 rounded bg-rose-950/60 hover:bg-rose-800 text-rose-300 transition">✕</button>
               </td>
             </tr>
@@ -973,7 +884,7 @@
       }
     }
 
-    // ==================== RATE DE ADERENȚĂ (7 ZILE) & BANCĂ ====================
+    // ==================== RATE DE ADERENȚĂ (7 ZILE COMPLETE) & BANCĂ ====================
     function getDailyAggregates() {
       const map = {};
       state.entries.forEach(e => {
@@ -988,10 +899,10 @@
 
     function renderAdherenceStats(targets) {
       const days = getDailyAggregates();
-      let completeDays = [...days];
-      if (completeDays.length > 7 && completeDays[completeDays.length - 1].kcal < 1200) {
-        completeDays.pop();
-      }
+      const todayStr = getLocalTodayStr();
+
+      // Excludem ziua de azi (și eventuale zile viitoare), păstrând strict zilele încheiate (< azi)
+      const completeDays = days.filter(d => d.date < todayStr);
       const last7 = completeDays.slice(-7);
 
       if (last7.length > 0) {
@@ -1044,14 +955,17 @@
                 <span class="text-purple-400">C: <strong>${item.c}g</strong></span>
               </div>
             </div>
-            <div class="mt-4 pt-2.5 border-t border-slate-800/80 flex items-center justify-between gap-2">
+            <div class="mt-4 pt-2.5 border-t border-slate-800/80 flex items-center justify-between gap-1.5">
               <button onclick="sendBankItemToTracker('${item.id}', true)" class="flex-1 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500 hover:to-teal-600 border border-emerald-500/30 text-emerald-300 hover:text-white text-xs font-semibold py-1.5 px-2.5 rounded-lg transition">
-                + Adaugă direct azi
+                + Adaugă azi
               </button>
-              <button onclick="sendBankItemToTracker('${item.id}', false)" class="bg-slate-850 hover:bg-slate-800 border border-slate-700/70 text-slate-200 text-xs py-1.5 px-2.5 rounded-lg transition">
-                Precompletează
+              <button onclick="sendBankItemToTracker('${item.id}', false)" class="bg-slate-850 hover:bg-slate-800 border border-slate-700/70 text-slate-200 text-xs py-1.5 px-2 rounded-lg transition" title="Precompletează în Tracker">
+                📋
               </button>
-              <button onclick="deleteBankItem('${item.id}')" class="text-rose-400 hover:text-rose-300 text-xs px-2 py-1">✕</button>
+              <button onclick="startEditBankItem('${item.id}')" class="bg-slate-850 hover:bg-slate-800 border border-slate-700/70 text-amber-300 text-xs py-1.5 px-2 rounded-lg transition" title="Editează alimentul în Bancă">
+                ✏️
+              </button>
+              <button onclick="deleteBankItem('${item.id}')" class="text-rose-400 hover:text-rose-300 text-xs px-2 py-1" title="Șterge din Bancă">✕</button>
             </div>
           </div>
         `;
@@ -1107,7 +1021,35 @@
       state.currentDate = d.toISOString().slice(0, 10);
       renderAll();
     }
-    function setRealToday() { state.currentDate = new Date().toISOString().slice(0, 10); renderAll(); }
+    function setRealToday() { state.currentDate = getLocalTodayStr(); renderAll(); }
+
+    // Copiază toate mesele din ziua anterioară în ziua selectată curent
+    function copyYesterdayMeals() {
+      const d = new Date(state.currentDate + 'T12:00:00');
+      d.setDate(d.getDate() - 1);
+      const prevDate = d.toISOString().slice(0, 10);
+      const prevEntries = state.entries.filter(e => e.date === prevDate);
+
+      if (prevEntries.length === 0) {
+        showToast(`Nu există mese înregistrate pe ${prevDate}!`);
+        return;
+      }
+
+      prevEntries.forEach((item, idx) => {
+        state.entries.push({
+          id: `${Date.now()}_${idx}`,
+          date: state.currentDate,
+          name: item.name,
+          p: item.p,
+          f: item.f,
+          c: item.c
+        });
+      });
+
+      saveState(false);
+      renderAll();
+      showToast(`${prevEntries.length} mese copiate din ${prevDate}!`);
+    }
 
     function onMealNameInput(val) {
       const match = state.foodBank.find(b => b.name.toLowerCase() === val.trim().toLowerCase());
@@ -1138,6 +1080,24 @@
       document.getElementById('liveKcalPreview').textContent = calcKcal(p, f, c);
     }
 
+    // Funcție inteligentă Upsert în Bancă (evită duplicatele după nume)
+    function upsertFoodBankItem(name, cat, p, f, c) {
+      const cleanName = name.trim();
+      const existing = state.foodBank.find(b => b.name.trim().toLowerCase() === cleanName.toLowerCase());
+      if (existing) {
+        existing.p = p;
+        existing.f = f;
+        existing.c = c;
+        if (cat) existing.cat = cat;
+        existing.freq = (Number(existing.freq) || 1) + 1;
+        return { updated: true, item: existing };
+      } else {
+        const newItem = { id: 'b_' + Date.now(), name: cleanName, cat: cat || 'Mese Gătite', p, f, c, freq: 5 };
+        state.foodBank.unshift(newItem);
+        return { updated: false, item: newItem };
+      }
+    }
+
     function addTrackerEntry() {
       const name = document.getElementById('inputMealName').value.trim();
       const p = parseFloat(document.getElementById('inputMealP').value) || 0;
@@ -1149,7 +1109,7 @@
       state.entries.push({ id: String(Date.now()), date: state.currentDate, name, p, f, c });
 
       if (document.getElementById('saveToBankCheck').checked) {
-        state.foodBank.push({ id: 'b_' + Date.now(), name, cat: 'Mese Gătite', p, f, c, freq: 5 });
+        upsertFoodBankItem(name, 'Mese Gătite', p, f, c);
       }
 
       document.getElementById('inputMealName').value = '';
@@ -1158,32 +1118,48 @@
       document.getElementById('inputMealC').value = '';
       document.getElementById('liveKcalPreview').textContent = '0';
 
-      saveState();
+      saveState(false);
       renderAll();
       showToast(`Adăugat: ${name}`);
+    }
+
+    function duplicateEntry(id) {
+      const entry = state.entries.find(e => String(e.id) === String(id));
+      if (!entry) return;
+      state.entries.push({
+        id: String(Date.now()),
+        date: state.currentDate,
+        name: entry.name,
+        p: entry.p,
+        f: entry.f,
+        c: entry.c
+      });
+      saveState(false);
+      renderAll();
+      showToast(`Duplicat: ${entry.name}`);
     }
 
     function updateEntryField(id, field, value) {
       const entry = state.entries.find(e => String(e.id) === String(id));
       if (!entry) return;
       entry[field] = field === 'name' ? value : (parseFloat(value) || 0);
-      saveState();
+      saveState(true); // Debounce 800ms
       renderAll();
     }
 
     function deleteEntry(id) {
       state.entries = state.entries.filter(e => String(e.id) !== String(id));
-      saveState();
+      saveState(false);
       renderAll();
     }
 
     function saveEntryToBank(id) {
       const entry = state.entries.find(e => String(e.id) === String(id));
       if (!entry) return;
-      state.foodBank.push({ id: 'b_' + Date.now(), name: entry.name, cat: 'Mese Gătite', p: entry.p, f: entry.f, c: entry.c, freq: 5 });
-      saveState();
+      const res = upsertFoodBankItem(entry.name, 'Mese Gătite', entry.p, entry.f, entry.c);
+      saveState(false);
       renderAll();
-      showToast(`Salvat în Bancă: ${entry.name}`);
+      showToast(res.updated ? `Actualizat în Bancă: ${entry.name}` : `Salvat în Bancă: ${entry.name}`);
     }
 
     function sendBankItemToTracker(bankId, directAdd) {
@@ -1192,7 +1168,7 @@
       item.freq = (item.freq || 0) + 1;
       if (directAdd) {
         state.entries.push({ id: String(Date.now()), date: state.currentDate, name: item.name, p: item.p, f: item.f, c: item.c });
-        saveState();
+        saveState(false);
         renderAll();
         showToast(`Adăugat în ${state.currentDate}: ${item.name}`);
       } else {
@@ -1201,7 +1177,39 @@
       }
     }
 
-    function addNewBankItem() {
+    // Editare directă în Banca de Alimente
+    function startEditBankItem(bankId) {
+      const item = state.foodBank.find(b => b.id === bankId);
+      if (!item) return;
+      document.getElementById('editBankId').value = item.id;
+      document.getElementById('newBankName').value = item.name;
+      document.getElementById('newBankCat').value = item.cat || 'Mese Gătite';
+      document.getElementById('newBankP').value = item.p;
+      document.getElementById('newBankF').value = item.f;
+      document.getElementById('newBankC').value = item.c;
+
+      document.getElementById('bankFormTitleLabel').textContent = `✏️ Editezi: ${item.name}`;
+      document.getElementById('bankFormTitleLabel').className = 'block text-[11px] text-amber-400 font-semibold mb-1';
+      document.getElementById('saveBankBtn').textContent = '💾 Actualizează';
+      document.getElementById(' cancelBankEditBtn');
+      document.getElementById('cancelBankEditBtn').classList.remove('hidden');
+      document.getElementById('bankFormCard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelBankEdit() {
+      document.getElementById('editBankId').value = '';
+      document.getElementById('newBankName').value = '';
+      document.getElementById('newBankP').value = '';
+      document.getElementById('newBankF').value = '';
+      document.getElementById('newBankC').value = '';
+      document.getElementById('bankFormTitleLabel').textContent = 'Denumire Masă / Aliment';
+      document.getElementById('bankFormTitleLabel').className = 'block text-[11px] text-slate-400 mb-1';
+      document.getElementById('saveBankBtn').textContent = '+ Salvează în Bancă';
+      document.getElementById('cancelBankEditBtn').classList.add('hidden');
+    }
+
+    function saveOrUpdateBankItem() {
+      const editId = document.getElementById('editBankId').value.trim();
       const name = document.getElementById('newBankName').value.trim();
       const cat = document.getElementById('newBankCat').value;
       const p = parseFloat(document.getElementById('newBankP').value) || 0;
@@ -1209,19 +1217,31 @@
       const c = parseFloat(document.getElementById('newBankC').value) || 0;
       if (!name) return;
 
-      state.foodBank.unshift({ id: 'b_' + Date.now(), name, cat, p, f, c, freq: 5 });
-      document.getElementById('newBankName').value = '';
-      document.getElementById('newBankP').value = '';
-      document.getElementById('newBankF').value = '';
-      document.getElementById('newBankC').value = '';
-      saveState();
+      if (editId) {
+        const existing = state.foodBank.find(b => b.id === editId);
+        if (existing) {
+          existing.name = name;
+          existing.cat = cat;
+          existing.p = p;
+          existing.f = f;
+          existing.c = c;
+          showToast(`Actualizat: ${name}`);
+        }
+        cancelBankEdit();
+      } else {
+        const res = upsertFoodBankItem(name, cat, p, f, c);
+        cancelBankEdit();
+        showToast(res.updated ? `Actualizat în Bancă: ${name}` : `Salvat în Bancă: ${name}`);
+      }
+
+      saveState(false);
       renderAll();
-      showToast('Aliment salvat în Bancă!');
     }
 
     function deleteBankItem(id) {
       state.foodBank = state.foodBank.filter(b => b.id !== id);
-      saveState();
+      if (document.getElementById('editBankId').value === id) cancelBankEdit();
+      saveState(false);
       renderAll();
     }
 
@@ -1238,13 +1258,13 @@
         proteinPerKg: parseFloat(document.getElementById('profProteinPerKg').value) || 1.8,
         fatPerKg: parseFloat(document.getElementById('profFatPerKg').value) || 0.8
       };
-      saveState();
+      saveState(true); // Debounce 800ms la modificarea profilului
       renderAll();
     }
 
     function resetProfileDefaults() {
       state.profile = { ...DEFAULT_PROFILE };
-      saveState();
+      saveState(false);
       renderAll();
       showToast('Resetat la valorile din Excel!');
     }
