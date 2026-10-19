@@ -91,12 +91,15 @@
 
       <!-- Navigation Tabs + Refresh -->
       <div class="flex items-center gap-1.5 w-full sm:w-auto justify-between sm:justify-end">
-        <nav class="flex items-center gap-1 bg-slate-950/90 p-1 rounded-xl border border-slate-800/90 text-xs overflow-x-auto">
+        <nav class="flex items-center gap-1 bg-slate-950/90 p-1 rounded-xl border border-slate-800/90 text-xs overflow-x-auto no-scrollbar">
           <button onclick="switchTab('tracker')" id="tabBtn-tracker" class="px-3 py-1.5 rounded-lg font-semibold transition bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-sm shadow-emerald-950 whitespace-nowrap">
             📋 Tracker
           </button>
           <button onclick="switchTab('banca')" id="tabBtn-banca" class="px-3 py-1.5 rounded-lg font-medium transition text-slate-400 hover:text-white whitespace-nowrap">
             🏦 Bancă
+          </button>
+          <button onclick="switchTab('calc100')" id="tabBtn-calc100" class="px-3 py-1.5 rounded-lg font-medium transition text-slate-400 hover:text-white whitespace-nowrap">
+            ⚖️ Calc 100g
           </button>
           <button onclick="switchTab('date')" id="tabBtn-date" class="px-3 py-1.5 rounded-lg font-medium transition text-slate-400 hover:text-white whitespace-nowrap">
             ⚙️ Date
@@ -169,7 +172,7 @@
             <p id="remDayP" class="text-[11px] text-slate-300/90 mt-2">Rămas: 141,3g</p>
           </div>
 
-          <!-- Grăsimi (Cyan / Turcoaz — distinct de avertizările Amber/Orange) -->
+          <!-- Grăsimi -->
           <div class="card-fat border border-cyan-500/20 rounded-2xl p-3.5 flex flex-col justify-between shadow-lg">
             <div class="flex items-center justify-between">
               <span class="text-xs font-semibold text-cyan-400">Grăsimi</span>
@@ -201,7 +204,7 @@
 
         </div>
 
-        <!-- Adaugă Masă / Aliment în Ziua Curentă (fără multiplicator) -->
+        <!-- Adaugă Masă / Aliment în Ziua Curentă -->
         <div id="addMealCardTop" class="order-2 lg:order-3 lg:col-span-12 glass-card border border-slate-800/90 rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-xl relative overflow-hidden">
           <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-emerald-500 via-teal-400 to-blue-500 opacity-80"></div>
 
@@ -251,7 +254,7 @@
             </div>
           </div>
 
-          <!-- Chips-uri cu Top 5 Alimente Frecvente -->
+          <!-- Chips-uri cu Top 5 Alimente Frecvente din Bancă (1-tap curat, fără cântar) -->
           <div class="pt-2 border-t border-slate-800/70 flex items-center gap-2">
             <span class="text-[11px] font-semibold text-slate-400 shrink-0">⚡ Frecvente:</span>
             <div id="topBankChips" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5"></div>
@@ -333,14 +336,14 @@
 
     </section>
 
-    <!-- ==================== TAB 2: BANCĂ ALIMENTE ==================== -->
+    <!-- ==================== TAB 2: BANCĂ ALIMENTE (PORȚII FIXE) ==================== -->
     <section id="tab-banca" class="hidden space-y-6">
       <div id="bankFormCard" class="glass-card border border-slate-800/90 rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl relative overflow-hidden">
         <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-emerald-500 via-cyan-400 to-purple-500 opacity-80"></div>
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h2 class="text-sm sm:text-base font-bold text-white">Bancă de Alimente & Calculator pe Gramaj (per 100g)</h2>
-            <p class="text-xs text-slate-400">Salvează declarațiile nutriționale per 100g și scalează direct pe fiecare card exact câte grame consumi.</p>
+            <h2 class="text-sm sm:text-base font-bold text-white">Bancă de Alimente & Mese (Porții Fixe)</h2>
+            <p class="text-xs text-slate-400">Salvează mesele și alimentele cu porție predefinită pentru adăugare rapidă dintr-un singur click.</p>
           </div>
           <div class="flex items-center gap-2">
             <input type="text" id="bankSearchInput" oninput="renderFoodBank()" placeholder="🔍 Caută în bancă..." class="bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
@@ -359,8 +362,8 @@
         <div class="grid grid-cols-3 sm:grid-cols-12 gap-2.5 pt-2 border-t border-slate-800/80 items-end">
           <input type="hidden" id="editBankId" value="" />
           <div class="col-span-3 sm:col-span-4">
-            <label class="block text-[11px] text-slate-400 mb-1" id="bankFormTitleLabel">Denumire Aliment / Preparat (bază 100g)</label>
-            <input type="text" id="newBankName" placeholder="Ex: Piept de pui la airfryer, Orez fiert..." class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-3 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
+            <label class="block text-[11px] text-slate-400 mb-1" id="bankFormTitleLabel">Denumire Masă / Aliment (porție fixă)</label>
+            <input type="text" id="newBankName" placeholder="Ex: Cereale Cini Minis (100g + 200ml), Banană..." class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-3 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
           </div>
           <div class="col-span-3 sm:col-span-2">
             <label class="block text-[11px] text-slate-400 mb-1">Categorie</label>
@@ -374,19 +377,19 @@
             </select>
           </div>
           <div class="col-span-1 sm:col-span-1">
-            <label class="block text-[11px] text-blue-400 mb-1">P / 100g</label>
+            <label class="block text-[11px] text-blue-400 mb-1">P (g)</label>
             <input type="text" inputmode="decimal" id="newBankP" oninput="updateBankFormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-blue-500 tabular-nums" />
           </div>
           <div class="col-span-1 sm:col-span-1">
-            <label class="block text-[11px] text-cyan-400 mb-1">G / 100g</label>
+            <label class="block text-[11px] text-cyan-400 mb-1">G (g)</label>
             <input type="text" inputmode="decimal" id="newBankF" oninput="updateBankFormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500 tabular-nums" />
           </div>
           <div class="col-span-1 sm:col-span-2">
-            <label class="block text-[11px] text-purple-400 mb-1">C / 100g</label>
+            <label class="block text-[11px] text-purple-400 mb-1">C (g)</label>
             <input type="text" inputmode="decimal" id="newBankC" oninput="updateBankFormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purple-500 tabular-nums" />
           </div>
           <div class="col-span-3 sm:col-span-2 flex flex-col">
-            <span class="text-[10px] text-slate-400 mb-1 sm:text-right">100g = <strong id="bankFormKcalPreview" class="text-emerald-400 tabular-nums">0</strong> kcal</span>
+            <span class="text-[10px] text-slate-400 mb-1 sm:text-right">Total = <strong id="bankFormKcalPreview" class="text-emerald-400 tabular-nums">0</strong> kcal</span>
             <div class="flex gap-1.5">
               <button id="saveBankBtn" onclick="saveOrUpdateBankItem()" class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-semibold py-1.5 px-3 rounded-lg text-xs sm:text-sm transition shadow whitespace-nowrap">
                 + Salvează în Bancă
@@ -402,7 +405,76 @@
       <div id="foodBankGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 tabular-nums"></div>
     </section>
 
-    <!-- ==================== TAB 3: DATE & FORMULE (FOAIA DATE) ==================== -->
+    <!-- ==================== TAB 3: CALC 100G (FOAIA ALIMENTE_100G) ==================== -->
+    <section id="tab-calc100" class="hidden space-y-6">
+      <div id="calc100FormCard" class="glass-card border border-slate-800/90 rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl relative overflow-hidden">
+        <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-emerald-500 via-cyan-400 to-purple-500 opacity-80"></div>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-white">Calculator pe Gramaj (Alimente & Mese la 100g)</h2>
+            <p class="text-xs text-slate-400">Salvează declarațiile nutriționale strict per 100g și scalează direct pe fiecare card exact câte grame consumi.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="calc100SearchInput" oninput="renderFoods100g()" placeholder="🔍 Caută la 100g..." class="bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
+            <select id="calc100CategoryFilter" onchange="renderFoods100g()" class="bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500">
+              <option value="ALL">Toate categoriile</option>
+              <option value="Mese Gătite">Mese Gătite</option>
+              <option value="Carne & Pește">Carne & Pește</option>
+              <option value="Garnituri & Cereale">Garnituri & Cereale</option>
+              <option value="Lactate & Brânzeturi">Lactate & Brânzeturi</option>
+              <option value="Fructe & Legume">Fructe & Legume</option>
+              <option value="Gustări & Altele">Gustări & Altele</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 sm:grid-cols-12 gap-2.5 pt-2 border-t border-slate-800/80 items-end">
+          <input type="hidden" id="editCalc100Id" value="" />
+          <div class="col-span-3 sm:col-span-4">
+            <label class="block text-[11px] text-slate-400 mb-1" id="calc100FormTitleLabel">Denumire Aliment / Preparat (bază 100g)</label>
+            <input type="text" id="newCalc100Name" placeholder="Ex: Piept de pui la airfryer, Orez fiert..." class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-3 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
+          </div>
+          <div class="col-span-3 sm:col-span-2">
+            <label class="block text-[11px] text-slate-400 mb-1">Categorie</label>
+            <select id="newCalc100Cat" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500">
+              <option value="Mese Gătite">Mese Gătite</option>
+              <option value="Carne & Pește">Carne & Pește</option>
+              <option value="Garnituri & Cereale">Garnituri & Cereale</option>
+              <option value="Lactate & Brânzeturi">Lactate & Brânzeturi</option>
+              <option value="Fructe & Legume">Fructe & Legume</option>
+              <option value="Gustări & Altele">Gustări & Altele</option>
+            </select>
+          </div>
+          <div class="col-span-1 sm:col-span-1">
+            <label class="block text-[11px] text-blue-400 mb-1">P / 100g</label>
+            <input type="text" inputmode="decimal" id="newCalc100P" oninput="updateCalc100FormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-blue-500 tabular-nums" />
+          </div>
+          <div class="col-span-1 sm:col-span-1">
+            <label class="block text-[11px] text-cyan-400 mb-1">G / 100g</label>
+            <input type="text" inputmode="decimal" id="newCalc100F" oninput="updateCalc100FormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500 tabular-nums" />
+          </div>
+          <div class="col-span-1 sm:col-span-2">
+            <label class="block text-[11px] text-purple-400 mb-1">C / 100g</label>
+            <input type="text" inputmode="decimal" id="newCalc100C" oninput="updateCalc100FormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purple-500 tabular-nums" />
+          </div>
+          <div class="col-span-3 sm:col-span-2 flex flex-col">
+            <span class="text-[10px] text-slate-400 mb-1 sm:text-right">100g = <strong id="calc100FormKcalPreview" class="text-emerald-400 tabular-nums">0</strong> kcal</span>
+            <div class="flex gap-1.5">
+              <button id="saveCalc100Btn" onclick="saveOrUpdateCalc100Item()" class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-semibold py-1.5 px-3 rounded-lg text-xs sm:text-sm transition shadow whitespace-nowrap">
+                + Salvează la 100g
+              </button>
+              <button id="cancelCalc100EditBtn" onclick="cancelCalc100Edit()" class="hidden bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-1.5 px-2.5 rounded-lg text-xs transition" title="Anulează editarea">
+                ✕
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="foods100Grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 tabular-nums"></div>
+    </section>
+
+    <!-- ==================== TAB 4: DATE & FORMULE (FOAIA DATE) ==================== -->
     <section id="tab-date" class="hidden space-y-6 tabular-nums">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-6 glass-card border border-slate-800/90 rounded-2xl p-5 space-y-5 shadow-xl relative overflow-hidden">
@@ -596,8 +668,8 @@
       { id: 'b42', name: 'Banană', cat: 'Fructe & Gustări', p: 1.0, f: 0.0, c: 25.1, freq: 26 }
     ];
 
-    // Memorează cantitatea în grame selectată pe fiecare card din Bancă (implicit 100g)
-    let bankGramMap = {};
+    // Memorează cantitatea în grame selectată pe fiecare card din Calc 100g (implicit 100g)
+    let calc100GramMap = {};
 
     // Stare pentru protecția la ștergere (dublu-tap "Sigur?" + Undo în Toast)
     let pendingDelete = { type: null, id: null, timer: null };
@@ -630,7 +702,8 @@
       cloudUrl: DEFAULT_CLOUD_URL,
       profile: { ...DEFAULT_PROFILE },
       entries: [],
-      foodBank: []
+      foodBank: [],
+      foods100g: []
     };
 
     let syncDebounceTimer = null;
@@ -639,11 +712,13 @@
       const savedProfile = localStorage.getItem('macro_ro_profile_v4');
       const savedEntries = localStorage.getItem('macro_ro_entries_v4');
       const savedBank = localStorage.getItem('macro_ro_bank_v4');
+      const savedFoods100 = localStorage.getItem('macro_ro_foods100g_v4');
       const savedCloud = localStorage.getItem('macro_ro_cloud_url_v4');
 
       state.profile = savedProfile ? JSON.parse(savedProfile) : { ...DEFAULT_PROFILE };
       state.entries = savedEntries ? JSON.parse(savedEntries) : [...INITIAL_TRACKER_ENTRIES];
       state.foodBank = savedBank ? JSON.parse(savedBank) : [...INITIAL_FOOD_BANK];
+      state.foods100g = savedFoods100 ? JSON.parse(savedFoods100) : [];
       state.cloudUrl = (savedCloud && savedCloud.trim()) ? savedCloud.trim() : DEFAULT_CLOUD_URL;
 
       if (!savedCloud && DEFAULT_CLOUD_URL) {
@@ -656,6 +731,7 @@
       localStorage.setItem('macro_ro_profile_v4', JSON.stringify(state.profile));
       localStorage.setItem('macro_ro_entries_v4', JSON.stringify(state.entries));
       localStorage.setItem('macro_ro_bank_v4', JSON.stringify(state.foodBank));
+      localStorage.setItem('macro_ro_foods100g_v4', JSON.stringify(state.foods100g));
     }
 
     // Salvare imediată (la adăugare/ștergere) sau cu debounce (la tastare în tabel/profil)
@@ -731,6 +807,7 @@
       if (data && data.status === 'ok') {
         if (Array.isArray(data.entries) && data.entries.length > 0) state.entries = data.entries;
         if (Array.isArray(data.foodBank) && data.foodBank.length > 0) state.foodBank = data.foodBank;
+        if (Array.isArray(data.foods100g)) state.foods100g = data.foods100g;
         if (data.profile) state.profile = { ...DEFAULT_PROFILE, ...data.profile };
         saveLocalOnly();
         renderAll();
@@ -744,6 +821,7 @@
         action: 'syncAll',
         entries: state.entries,
         foodBank: state.foodBank,
+        foods100g: state.foods100g,
         profile: state.profile
       };
 
@@ -833,6 +911,7 @@
       renderTrackerTab(targets);
       renderAdherenceStats(targets);
       renderFoodBank();
+      renderFoods100g();
       renderProfileTab(targets);
       renderDatalistAndTopChips();
     }
@@ -866,7 +945,7 @@
       const mobileBody = document.getElementById('trackerMobileBody');
 
       if (dayEntries.length === 0) {
-        const emptyMsg = `Nicio masă adăugată pentru ${state.currentDate}. Introdu masa mai sus sau alege din Bancă!`;
+        const emptyMsg = `Nicio masă adăugată pentru ${state.currentDate}. Introdu masa mai sus, alege din Bancă sau din Calc 100g!`;
         tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-500">${emptyMsg}</td></tr>`;
         mobileBody.innerHTML = `<div class="py-8 px-4 text-center text-xs text-slate-500">${emptyMsg}</div>`;
       } else {
@@ -993,10 +1072,6 @@
       `;
     }
 
-    // Schimbarea dinamică a culorii barei de progres la depășiri:
-    // <= +5%: culoarea proprie a macronutrientului + text galben-chihlimbar
-    // +5% .. +10%: gradient portocaliu-avertizare
-    // > +10%: roșu aprins cu glow
     function updateMacroCard(key, val, target, unit) {
       document.getElementById(`valDay${key}`).textContent = fmtComma(val);
       document.getElementById(`targetDay${key}`).textContent = fmtComma(target);
@@ -1018,17 +1093,14 @@
       const remEl = document.getElementById(`remDay${key}`);
 
       if (ratio > 1.10) {
-        // Depășire > 10% -> Bară Roșu aprins cu glow
         barEl.className = 'bg-gradient-to-r from-rose-500 via-red-600 to-rose-600 h-full transition-all duration-300 shadow-[0_0_10px_rgba(244,63,94,0.7)]';
         remEl.textContent = `⚠️ Depășire: +${fmtComma(diff)}${unit || ' kcal'} (+${overPct}%)`;
         remEl.className = 'text-[11px] text-rose-400 font-bold mt-2 tabular-nums';
       } else if (ratio > 1.05) {
-        // Depășire între 5% și 10% -> Bară Portocalie-Avertizare (unică, nu se mai confundă cu Grăsimile)
         barEl.className = 'bg-gradient-to-r from-amber-400 via-orange-500 to-orange-600 h-full transition-all duration-300 shadow-[0_0_8px_rgba(249,115,22,0.55)]';
         remEl.textContent = `Depășire: +${fmtComma(diff)}${unit || ' kcal'} (+${overPct}%)`;
         remEl.className = 'text-[11px] text-orange-400 font-semibold mt-2 tabular-nums';
       } else {
-        // În țintă sau depășire ușoară (<= 5%) -> Culoarea normală a barei
         barEl.className = `${defaultBarGradients[key]} h-full transition-all duration-300`;
         if (diff < 0) {
           remEl.textContent = `Rămas: ${fmtComma(Math.abs(diff))}${unit || ' kcal'}`;
@@ -1043,7 +1115,7 @@
       }
     }
 
-    // ==================== RATE DE ADERENȚĂ (7 ZILE COMPLETE) & BANCĂ ====================
+    // ==================== RATE DE ADERENȚĂ (7 ZILE COMPLETE) & AUTOCOMPLETE ====================
     function getDailyAggregates() {
       const map = {};
       state.entries.forEach(e => {
@@ -1060,7 +1132,6 @@
       const days = getDailyAggregates();
       const todayStr = getLocalTodayStr();
 
-      // Excludem ziua de azi (și eventuale zile viitoare), păstrând strict zilele încheiate (< azi)
       const completeDays = days.filter(d => d.date < todayStr);
       const last7 = completeDays.slice(-7);
 
@@ -1089,7 +1160,7 @@
         `<option value="${escapeHtml(item.name)}">P:${fmtComma(item.p)}g | G:${fmtComma(item.f)}g | C:${fmtComma(item.c)}g (${calcKcal(item.p, item.f, item.c)} kcal)</option>`
       ).join('');
 
-      // Randare Top 5 Alimente Frecvente sub formularul din Tracker
+      // Randare Top 5 Alimente Frecvente sub formularul din Tracker (1-tap curat, fără iconița de cântar)
       const top5 = sorted.slice(0, 5);
       const chipsContainer = document.getElementById('topBankChips');
       if (top5.length === 0) {
@@ -1106,26 +1177,12 @@
               <span>${escapeHtml(item.name)}</span>
               <span class="text-[10px] text-slate-400 tabular-nums">(${k})</span>
             </button>
-            <button type="button" onclick="openItemInBankForGramScaling('${item.id}')" title="Scalează la gramaj în Bancă" class="px-1.5 py-1 text-[11px] text-slate-400 hover:text-cyan-300 hover:bg-slate-800 border-l border-slate-800 transition">
-              ⚖️
-            </button>
           </div>
         `;
       }).join('');
     }
 
-    // ==================== BANCĂ DE ALIMENTE CU CALCULATOR DINAMIC LA GRAMAJ ====================
-    function getScaledBankItemValues(item, rawGrams) {
-      const grams = parseNumInput(rawGrams);
-      const effectiveGrams = grams > 0 ? grams : 0;
-      const ratio = effectiveGrams / 100;
-      const p = Number(((Number(item.p) || 0) * ratio).toFixed(1));
-      const f = Number(((Number(item.f) || 0) * ratio).toFixed(1));
-      const c = Number(((Number(item.c) || 0) * ratio).toFixed(1));
-      const kcal = calcKcal(p, f, c);
-      return { grams: effectiveGrams, p, f, c, kcal };
-    }
-
+    // ==================== TAB 2: BANCĂ DE ALIMENTE (PORȚII FIXE, FĂRĂ SCALARE) ====================
     function renderFoodBank() {
       const q = (document.getElementById('bankSearchInput')?.value || '').toLowerCase().trim();
       const cat = document.getElementById('bankCategoryFilter')?.value || 'ALL';
@@ -1134,10 +1191,18 @@
         .filter(item => (cat === 'ALL' || item.cat === cat) && item.name.toLowerCase().includes(q))
         .sort((a, b) => (b.freq || 0) - (a.freq || 0));
 
-      document.getElementById('foodBankGrid').innerHTML = filtered.map(item => {
-        const currentGrams = bankGramMap[item.id] !== undefined ? bankGramMap[item.id] : 100;
-        const scaled = getScaledBankItemValues(item, currentGrams);
-        const baseKcal = calcKcal(item.p, item.f, item.c);
+      const gridEl = document.getElementById('foodBankGrid');
+      if (filtered.length === 0) {
+        gridEl.innerHTML = `
+          <div class="col-span-full glass-card border border-slate-800/90 rounded-2xl p-8 text-center text-xs sm:text-sm text-slate-400">
+            Nicio masă găsită în Bancă.
+          </div>
+        `;
+        return;
+      }
+
+      gridEl.innerHTML = filtered.map(item => {
+        const totalKcal = calcKcal(item.p, item.f, item.c);
         const isConfirming = (pendingDelete.type === 'bank' && String(pendingDelete.id) === String(item.id));
 
         return `
@@ -1145,47 +1210,17 @@
             <div>
               <div class="flex items-start justify-between gap-2">
                 <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-800/90 text-slate-400 border border-slate-700/60">${escapeHtml(item.cat)}</span>
-                <span id="bankCardKcal_${item.id}" class="text-xs font-extrabold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-lg">${scaled.kcal} kcal</span>
+                <span class="text-xs font-extrabold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-lg">${totalKcal} kcal</span>
               </div>
 
               <h4 class="font-bold text-white text-sm mt-2 leading-snug">${escapeHtml(item.name)}</h4>
-              <p class="text-[11px] text-slate-500 mt-0.5">
-                Ref. 100g: P ${fmtComma(item.p)}g • G ${fmtComma(item.f)}g • C ${fmtComma(item.c)}g (${baseKcal} kcal)
-              </p>
 
-              <!-- Calculator dinamic la gramaj pe card -->
-              <div class="mt-3 p-2.5 rounded-xl bg-slate-950/85 border border-slate-800/90 space-y-2">
-                <div class="flex items-center justify-between gap-2">
-                  <label for="bankGramInput_${item.id}" class="text-[11px] font-semibold text-emerald-400 flex items-center gap-1">
-                    <span>⚖️ Cantitate:</span>
-                  </label>
-                  <div class="flex items-center gap-1">
-                    <button type="button" onclick="setBankCardGrams('${item.id}', 50)" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-700/70 transition">50g</button>
-                    <button type="button" onclick="setBankCardGrams('${item.id}', 100)" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/70 transition">100g</button>
-                    <button type="button" onclick="setBankCardGrams('${item.id}', 150)" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-700/70 transition">150g</button>
-                    <button type="button" onclick="setBankCardGrams('${item.id}', 200)" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-700/70 transition">200g</button>
-                  </div>
-                </div>
-
-                <div class="flex items-center justify-between gap-2">
-                  <div class="relative flex-1">
-                    <input
-                      type="text"
-                      inputmode="decimal"
-                      id="bankGramInput_${item.id}"
-                      value="${fmtComma(currentGrams)}"
-                      oninput="onBankCardGramInput('${item.id}', this.value)"
-                      placeholder="100"
-                      class="w-full bg-slate-900 border border-emerald-500/40 focus:border-emerald-400 rounded-lg pl-2.5 pr-7 py-1 text-xs font-bold text-white focus:outline-none tabular-nums"
-                    />
-                    <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] text-slate-400 pointer-events-none">g</span>
-                  </div>
-                  <div class="flex items-center gap-2.5 text-xs shrink-0">
-                    <span class="text-blue-400">P: <strong id="bankCardP_${item.id}" class="text-white">${fmtComma(scaled.p)}g</strong></span>
-                    <span class="text-cyan-400">G: <strong id="bankCardF_${item.id}" class="text-white">${fmtComma(scaled.f)}g</strong></span>
-                    <span class="text-purple-400">C: <strong id="bankCardC_${item.id}" class="text-white">${fmtComma(scaled.c)}g</strong></span>
-                  </div>
-                </div>
+              <div class="mt-3 p-2.5 rounded-xl bg-slate-950/85 border border-slate-800/90 flex items-center justify-between text-xs">
+                <span class="text-blue-400">P: <strong class="text-white">${fmtComma(item.p)}g</strong></span>
+                <span class="text-slate-700">•</span>
+                <span class="text-cyan-400">G: <strong class="text-white">${fmtComma(item.f)}g</strong></span>
+                <span class="text-slate-700">•</span>
+                <span class="text-purple-400">C: <strong class="text-white">${fmtComma(item.c)}g</strong></span>
               </div>
             </div>
 
@@ -1193,10 +1228,10 @@
               <button onclick="sendBankItemToTracker('${item.id}', true)" class="flex-1 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500 hover:to-teal-600 border border-emerald-500/30 text-emerald-300 hover:text-white text-xs font-semibold py-1.5 px-2.5 rounded-lg transition">
                 + Adaugă azi
               </button>
-              <button onclick="sendBankItemToTracker('${item.id}', false)" class="bg-slate-850 hover:bg-slate-800 border border-slate-700/70 text-slate-200 text-xs py-1.5 px-2 rounded-lg transition" title="Precompletează în Tracker cu gramajul ales">
+              <button onclick="sendBankItemToTracker('${item.id}', false)" class="bg-slate-850 hover:bg-slate-800 border border-slate-700/70 text-slate-200 text-xs py-1.5 px-2 rounded-lg transition" title="Precompletează în Tracker">
                 📋
               </button>
-              <button onclick="startEditBankItem('${item.id}')" class="bg-slate-850 hover:bg-slate-800 border border-slate-700/70 text-amber-300 text-xs py-1.5 px-2 rounded-lg transition" title="Editează valorile de bază (100g) în Bancă">
+              <button onclick="startEditBankItem('${item.id}')" class="bg-slate-850 hover:bg-slate-800 border border-slate-700/70 text-amber-300 text-xs py-1.5 px-2 rounded-lg transition" title="Editează în Bancă">
                 ✏️
               </button>
               <button onclick="requestDeleteBankItem('${item.id}')" class="text-xs rounded-lg transition ${isConfirming ? 'px-2.5 py-1.5 bg-rose-600 text-white font-bold ring-2 ring-rose-400/60' : 'text-rose-400 hover:text-rose-300 px-2 py-1'}" title="Șterge din Bancă">${isConfirming ? 'Sigur?' : '✕'}</button>
@@ -1204,50 +1239,6 @@
           </div>
         `;
       }).join('');
-    }
-
-    // Actualizare dinamică a valorilor pe cardul din Bancă fără pierderea focusului la tastare
-    function onBankCardGramInput(bankId, rawVal) {
-      bankGramMap[bankId] = rawVal;
-      const item = state.foodBank.find(b => String(b.id) === String(bankId));
-      if (!item) return;
-
-      const scaled = getScaledBankItemValues(item, rawVal);
-      const pEl = document.getElementById(`bankCardP_${bankId}`);
-      const fEl = document.getElementById(`bankCardF_${bankId}`);
-      const cEl = document.getElementById(`bankCardC_${bankId}`);
-      const kEl = document.getElementById(`bankCardKcal_${bankId}`);
-
-      if (pEl) pEl.textContent = `${fmtComma(scaled.p)}g`;
-      if (fEl) fEl.textContent = `${fmtComma(scaled.f)}g`;
-      if (cEl) cEl.textContent = `${fmtComma(scaled.c)}g`;
-      if (kEl) kEl.textContent = `${scaled.kcal} kcal`;
-    }
-
-    function setBankCardGrams(bankId, gramsVal) {
-      bankGramMap[bankId] = gramsVal;
-      const inputEl = document.getElementById(`bankGramInput_${bankId}`);
-      if (inputEl) inputEl.value = fmtComma(gramsVal);
-      onBankCardGramInput(bankId, gramsVal);
-    }
-
-    function openItemInBankForGramScaling(bankId) {
-      switchTab('banca');
-      const searchEl = document.getElementById('bankSearchInput');
-      const catEl = document.getElementById('bankCategoryFilter');
-      if (searchEl) searchEl.value = '';
-      if (catEl) catEl.value = 'ALL';
-      renderFoodBank();
-
-      setTimeout(() => {
-        const cardEl = document.getElementById(`bankCard_${bankId}`);
-        const inputEl = document.getElementById(`bankGramInput_${bankId}`);
-        if (cardEl) cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        if (inputEl) {
-          inputEl.focus();
-          inputEl.select();
-        }
-      }, 60);
     }
 
     function updateBankFormKcalPreview() {
@@ -1258,11 +1249,353 @@
       if (previewEl) previewEl.textContent = calcKcal(p, f, c);
     }
 
+    function sendBankItemToTracker(bankId, directAdd) {
+      const item = state.foodBank.find(b => String(b.id) === String(bankId));
+      if (!item) return;
+
+      const p = Number(item.p) || 0;
+      const f = Number(item.f) || 0;
+      const c = Number(item.c) || 0;
+      item.freq = (Number(item.freq) || 0) + 1;
+
+      if (directAdd) {
+        state.entries.push({
+          id: String(Date.now()),
+          date: state.currentDate,
+          name: item.name,
+          p,
+          f,
+          c
+        });
+        saveState(false);
+        renderAll();
+        showToast(`Adăugat în ${state.currentDate}: ${item.name}`);
+      } else {
+        switchTab('tracker');
+        document.getElementById('inputMealName').value = item.name;
+        document.getElementById('inputMealP').value = fmtComma(p);
+        document.getElementById('inputMealF').value = fmtComma(f);
+        document.getElementById('inputMealC').value = fmtComma(c);
+        updateLiveKcalPreview();
+        document.getElementById('addMealCardTop').scrollIntoView({ behavior: 'smooth' });
+        showToast(`Precompletat: ${item.name}`);
+      }
+    }
+
+    function startEditBankItem(bankId) {
+      const item = state.foodBank.find(b => String(b.id) === String(bankId));
+      if (!item) return;
+      document.getElementById('editBankId').value = item.id;
+      document.getElementById('newBankName').value = item.name;
+      document.getElementById('newBankCat').value = item.cat || 'Mese Gătite';
+      document.getElementById('newBankP').value = fmtComma(item.p);
+      document.getElementById('newBankF').value = fmtComma(item.f);
+      document.getElementById('newBankC').value = fmtComma(item.c);
+      updateBankFormKcalPreview();
+
+      document.getElementById('bankFormTitleLabel').textContent = `✏️ Editezi în Bancă: ${item.name}`;
+      document.getElementById('bankFormTitleLabel').className = 'block text-[11px] text-amber-400 font-semibold mb-1';
+      document.getElementById('saveBankBtn').textContent = '💾 Actualizează';
+      document.getElementById('cancelBankEditBtn').classList.remove('hidden');
+      document.getElementById('bankFormCard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelBankEdit() {
+      document.getElementById('editBankId').value = '';
+      document.getElementById('newBankName').value = '';
+      document.getElementById('newBankP').value = '';
+      document.getElementById('newBankF').value = '';
+      document.getElementById('newBankC').value = '';
+      updateBankFormKcalPreview();
+      document.getElementById('bankFormTitleLabel').textContent = 'Denumire Masă / Aliment (porție fixă)';
+      document.getElementById('bankFormTitleLabel').className = 'block text-[11px] text-slate-400 mb-1';
+      document.getElementById('saveBankBtn').textContent = '+ Salvează în Bancă';
+      document.getElementById('cancelBankEditBtn').classList.add('hidden');
+    }
+
+    function saveOrUpdateBankItem() {
+      const editId = document.getElementById('editBankId').value.trim();
+      const name = document.getElementById('newBankName').value.trim();
+      const cat = document.getElementById('newBankCat').value;
+      const p = parseNumInput(document.getElementById('newBankP').value);
+      const f = parseNumInput(document.getElementById('newBankF').value);
+      const c = parseNumInput(document.getElementById('newBankC').value);
+      if (!name) return;
+
+      if (editId) {
+        const existing = state.foodBank.find(b => String(b.id) === String(editId));
+        if (existing) {
+          existing.name = name;
+          existing.cat = cat;
+          existing.p = p;
+          existing.f = f;
+          existing.c = c;
+          showToast(`Actualizat: ${name}`);
+        }
+        cancelBankEdit();
+      } else {
+        const res = upsertFoodBankItem(name, cat, p, f, c);
+        cancelBankEdit();
+        showToast(res.updated ? `Actualizat în Bancă: ${name}` : `Salvat în Bancă: ${name}`);
+      }
+
+      saveState(false);
+      renderAll();
+    }
+
+    // ==================== TAB 3: CALC 100G (CALCULATOR DINAMIC LA GRAMAJ) ====================
+    function getScaledItemValues(item, rawGrams) {
+      const grams = parseNumInput(rawGrams);
+      const effectiveGrams = grams > 0 ? grams : 0;
+      const ratio = effectiveGrams / 100;
+      const p = Number(((Number(item.p) || 0) * ratio).toFixed(1));
+      const f = Number(((Number(item.f) || 0) * ratio).toFixed(1));
+      const c = Number(((Number(item.c) || 0) * ratio).toFixed(1));
+      const kcal = calcKcal(p, f, c);
+      return { grams: effectiveGrams, p, f, c, kcal };
+    }
+
+    function renderFoods100g() {
+      const q = (document.getElementById('calc100SearchInput')?.value || '').toLowerCase().trim();
+      const cat = document.getElementById('calc100CategoryFilter')?.value || 'ALL';
+
+      const filtered = state.foods100g
+        .filter(item => (cat === 'ALL' || item.cat === cat) && item.name.toLowerCase().includes(q))
+        .sort((a, b) => (b.freq || 0) - (a.freq || 0));
+
+      const gridEl = document.getElementById('foods100Grid');
+      if (filtered.length === 0) {
+        const emptyText = state.foods100g.length === 0
+          ? 'Niciun aliment adăugat încă în pagina Calc 100g. Folosește formularul de mai sus pentru a adăuga alimente sau mâncăruri calculate la 100g!'
+          : 'Niciun aliment găsit pentru filtrul selectat.';
+        gridEl.innerHTML = `
+          <div class="col-span-full glass-card border border-slate-800/90 rounded-2xl p-8 text-center text-xs sm:text-sm text-slate-400">
+            ${emptyText}
+          </div>
+        `;
+        return;
+      }
+
+      gridEl.innerHTML = filtered.map(item => {
+        const currentGrams = calc100GramMap[item.id] !== undefined ? calc100GramMap[item.id] : 100;
+        const scaled = getScaledItemValues(item, currentGrams);
+        const baseKcal = calcKcal(item.p, item.f, item.c);
+        const isConfirming = (pendingDelete.type === 'calc100' && String(pendingDelete.id) === String(item.id));
+
+        return `
+          <div id="calc100Card_${item.id}" class="glass-card border border-slate-800/90 rounded-2xl p-4 flex flex-col justify-between hover:border-emerald-500/40 transition shadow-lg">
+            <div>
+              <div class="flex items-start justify-between gap-2">
+                <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-800/90 text-slate-400 border border-slate-700/60">${escapeHtml(item.cat)}</span>
+                <span id="calc100CardKcal_${item.id}" class="text-xs font-extrabold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-lg">${scaled.kcal} kcal</span>
+              </div>
+
+              <h4 class="font-bold text-white text-sm mt-2 leading-snug">${escapeHtml(item.name)}</h4>
+              <p class="text-[11px] text-slate-500 mt-0.5">
+                Ref. 100g: P ${fmtComma(item.p)}g • G ${fmtComma(item.f)}g • C ${fmtComma(item.c)}g (${baseKcal} kcal)
+              </p>
+
+              <!-- Calculator dinamic la gramaj pe card (fără butoane rapide 50g/100g/etc.) -->
+              <div class="mt-3 p-2.5 rounded-xl bg-slate-950/85 border border-slate-800/90 space-y-2">
+                <div class="flex items-center justify-between gap-2">
+                  <label for="calc100GramInput_${item.id}" class="text-[11px] font-semibold text-emerald-400 flex items-center gap-1">
+                    <span>⚖️ Cantitate:</span>
+                  </label>
+                </div>
+
+                <div class="flex items-center justify-between gap-2">
+                  <div class="relative flex-1">
+                    <input
+                      type="text"
+                      inputmode="decimal"
+                      id="calc100GramInput_${item.id}"
+                      value="${fmtComma(currentGrams)}"
+                      oninput="onCalc100CardGramInput('${item.id}', this.value)"
+                      placeholder="100"
+                      class="w-full bg-slate-900 border border-emerald-500/40 focus:border-emerald-400 rounded-lg pl-2.5 pr-7 py-1 text-xs font-bold text-white focus:outline-none tabular-nums"
+                    />
+                    <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] text-slate-400 pointer-events-none">g</span>
+                  </div>
+                  <div class="flex items-center gap-2.5 text-xs shrink-0">
+                    <span class="text-blue-400">P: <strong id="calc100CardP_${item.id}" class="text-white">${fmtComma(scaled.p)}g</strong></span>
+                    <span class="text-cyan-400">G: <strong id="calc100CardF_${item.id}" class="text-white">${fmtComma(scaled.f)}g</strong></span>
+                    <span class="text-purple-400">C: <strong id="calc100CardC_${item.id}" class="text-white">${fmtComma(scaled.c)}g</strong></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3.5 pt-2.5 border-t border-slate-800/80 flex items-center justify-between gap-1.5">
+              <button onclick="sendCalc100ItemToTracker('${item.id}', true)" class="flex-1 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500 hover:to-teal-600 border border-emerald-500/30 text-emerald-300 hover:text-white text-xs font-semibold py-1.5 px-2.5 rounded-lg transition">
+                + Adaugă azi
+              </button>
+              <button onclick="sendCalc100ItemToTracker('${item.id}', false)" class="bg-slate-850 hover:bg-slate-800 border border-slate-700/70 text-slate-200 text-xs py-1.5 px-2 rounded-lg transition" title="Precompletează în Tracker cu gramajul ales">
+                📋
+              </button>
+              <button onclick="startEditCalc100Item('${item.id}')" class="bg-slate-850 hover:bg-slate-800 border border-slate-700/70 text-amber-300 text-xs py-1.5 px-2 rounded-lg transition" title="Editează valorile de bază (100g)">
+                ✏️
+              </button>
+              <button onclick="requestDeleteCalc100Item('${item.id}')" class="text-xs rounded-lg transition ${isConfirming ? 'px-2.5 py-1.5 bg-rose-600 text-white font-bold ring-2 ring-rose-400/60' : 'text-rose-400 hover:text-rose-300 px-2 py-1'}" title="Șterge din Calc 100g">${isConfirming ? 'Sigur?' : '✕'}</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function onCalc100CardGramInput(itemId, rawVal) {
+      calc100GramMap[itemId] = rawVal;
+      const item = state.foods100g.find(f => String(f.id) === String(itemId));
+      if (!item) return;
+
+      const scaled = getScaledItemValues(item, rawVal);
+      const pEl = document.getElementById(`calc100CardP_${itemId}`);
+      const fEl = document.getElementById(`calc100CardF_${itemId}`);
+      const cEl = document.getElementById(`calc100CardC_${itemId}`);
+      const kEl = document.getElementById(`calc100CardKcal_${itemId}`);
+
+      if (pEl) pEl.textContent = `${fmtComma(scaled.p)}g`;
+      if (fEl) fEl.textContent = `${fmtComma(scaled.f)}g`;
+      if (cEl) cEl.textContent = `${fmtComma(scaled.c)}g`;
+      if (kEl) kEl.textContent = `${scaled.kcal} kcal`;
+    }
+
+    function updateCalc100FormKcalPreview() {
+      const p = document.getElementById('newCalc100P')?.value || 0;
+      const f = document.getElementById('newCalc100F')?.value || 0;
+      const c = document.getElementById('newCalc100C')?.value || 0;
+      const previewEl = document.getElementById('calc100FormKcalPreview');
+      if (previewEl) previewEl.textContent = calcKcal(p, f, c);
+    }
+
+    function formatScaledMealName(baseName, grams) {
+      const gStr = `${fmtComma(grams)}g`;
+      if (baseName.toLowerCase().includes(`(${gStr.toLowerCase()})`)) {
+        return baseName;
+      }
+      return `${baseName} (${gStr})`;
+    }
+
+    function sendCalc100ItemToTracker(itemId, directAdd) {
+      const item = state.foods100g.find(f => String(f.id) === String(itemId));
+      if (!item) return;
+
+      const rawGrams = calc100GramMap[itemId] !== undefined ? calc100GramMap[itemId] : 100;
+      const scaled = getScaledItemValues(item, rawGrams);
+      if (scaled.grams <= 0) {
+        showToast('Introdu o cantitate în grame mai mare decât 0!');
+        return;
+      }
+
+      const finalName = formatScaledMealName(item.name, scaled.grams);
+      item.freq = (Number(item.freq) || 0) + 1;
+
+      if (directAdd) {
+        state.entries.push({
+          id: String(Date.now()),
+          date: state.currentDate,
+          name: finalName,
+          p: scaled.p,
+          f: scaled.f,
+          c: scaled.c
+        });
+        saveState(false);
+        renderAll();
+        showToast(`Adăugat în ${state.currentDate}: ${finalName}`);
+      } else {
+        switchTab('tracker');
+        document.getElementById('inputMealName').value = finalName;
+        document.getElementById('inputMealP').value = fmtComma(scaled.p);
+        document.getElementById('inputMealF').value = fmtComma(scaled.f);
+        document.getElementById('inputMealC').value = fmtComma(scaled.c);
+        updateLiveKcalPreview();
+        document.getElementById('addMealCardTop').scrollIntoView({ behavior: 'smooth' });
+        showToast(`Precompletat: ${finalName}`);
+      }
+    }
+
+    function upsertFoods100Item(name, cat, p, f, c) {
+      const cleanName = name.trim();
+      const existing = state.foods100g.find(item => item.name.trim().toLowerCase() === cleanName.toLowerCase());
+      if (existing) {
+        existing.p = p;
+        existing.f = f;
+        existing.c = c;
+        if (cat) existing.cat = cat;
+        existing.freq = (Number(existing.freq) || 1) + 1;
+        return { updated: true, item: existing };
+      } else {
+        const newItem = { id: 'f100_' + Date.now(), name: cleanName, cat: cat || 'Mese Gătite', p, f, c, freq: 1 };
+        state.foods100g.unshift(newItem);
+        return { updated: false, item: newItem };
+      }
+    }
+
+    function startEditCalc100Item(itemId) {
+      const item = state.foods100g.find(f => String(f.id) === String(itemId));
+      if (!item) return;
+      document.getElementById('editCalc100Id').value = item.id;
+      document.getElementById('newCalc100Name').value = item.name;
+      document.getElementById('newCalc100Cat').value = item.cat || 'Mese Gătite';
+      document.getElementById('newCalc100P').value = fmtComma(item.p);
+      document.getElementById('newCalc100F').value = fmtComma(item.f);
+      document.getElementById('newCalc100C').value = fmtComma(item.c);
+      updateCalc100FormKcalPreview();
+
+      document.getElementById('calc100FormTitleLabel').textContent = `✏️ Editezi (valori per 100g): ${item.name}`;
+      document.getElementById('calc100FormTitleLabel').className = 'block text-[11px] text-amber-400 font-semibold mb-1';
+      document.getElementById('saveCalc100Btn').textContent = '💾 Actualizează';
+      document.getElementById('cancelCalc100EditBtn').classList.remove('hidden');
+      document.getElementById('calc100FormCard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelCalc100Edit() {
+      document.getElementById('editCalc100Id').value = '';
+      document.getElementById('newCalc100Name').value = '';
+      document.getElementById('newCalc100P').value = '';
+      document.getElementById('newCalc100F').value = '';
+      document.getElementById('newCalc100C').value = '';
+      updateCalc100FormKcalPreview();
+      document.getElementById('calc100FormTitleLabel').textContent = 'Denumire Aliment / Preparat (bază 100g)';
+      document.getElementById('calc100FormTitleLabel').className = 'block text-[11px] text-slate-400 mb-1';
+      document.getElementById('saveCalc100Btn').textContent = '+ Salvează la 100g';
+      document.getElementById('cancelCalc100EditBtn').classList.add('hidden');
+    }
+
+    function saveOrUpdateCalc100Item() {
+      const editId = document.getElementById('editCalc100Id').value.trim();
+      const name = document.getElementById('newCalc100Name').value.trim();
+      const cat = document.getElementById('newCalc100Cat').value;
+      const p = parseNumInput(document.getElementById('newCalc100P').value);
+      const f = parseNumInput(document.getElementById('newCalc100F').value);
+      const c = parseNumInput(document.getElementById('newCalc100C').value);
+      if (!name) return;
+
+      if (editId) {
+        const existing = state.foods100g.find(item => String(item.id) === String(editId));
+        if (existing) {
+          existing.name = name;
+          existing.cat = cat;
+          existing.p = p;
+          existing.f = f;
+          existing.c = c;
+          showToast(`Actualizat la 100g: ${name}`);
+        }
+        cancelCalc100Edit();
+      } else {
+        const res = upsertFoods100Item(name, cat, p, f, c);
+        cancelCalc100Edit();
+        showToast(res.updated ? `Actualizat în Calc 100g: ${name}` : `Salvat în Calc 100g: ${name}`);
+      }
+
+      saveState(false);
+      renderAll();
+    }
+
+    // ==================== TAB 4: PROFIL & FORMULE ====================
     function renderProfileTab(t) {
       const p = state.profile;
       const activeId = document.activeElement ? document.activeElement.id : '';
 
-      // Nu suprascriem câmpul în care utilizatorul tastează activ (ex: când tocmai a pus o virgulă "78,")
       const setValIfNotFocused = (id, val) => {
         if (activeId !== id) {
           document.getElementById(id).value = fmtComma(val);
@@ -1308,7 +1641,7 @@
     }
 
     function quickAddFromChip(bankId) {
-      const item = state.foodBank.find(b => b.id === bankId);
+      const item = state.foodBank.find(b => String(b.id) === String(bankId));
       if (!item) return;
       item.freq = (Number(item.freq) || 0) + 1;
       state.entries.push({
@@ -1333,7 +1666,7 @@
 
     // ==================== ACȚIUNI UTILIZATOR ====================
     function switchTab(tab) {
-      ['tracker', 'banca', 'date'].forEach(t => {
+      ['tracker', 'banca', 'calc100', 'date'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
         const btn = document.getElementById(`tabBtn-${t}`);
         if (btn) {
@@ -1476,11 +1809,41 @@
       const idx = state.foodBank.findIndex(b => String(b.id) === String(id));
       if (idx === -1) return;
       const [removed] = state.foodBank.splice(idx, 1);
-      if (document.getElementById('editBankId').value === id) cancelBankEdit();
+      if (document.getElementById('editBankId').value === String(id)) cancelBankEdit();
       lastDeletedRecord = { type: 'bank', item: removed, index: idx };
       saveState(false);
       renderAll();
       showToast(`Șters din Bancă: ${removed.name}`, true);
+    }
+
+    function requestDeleteCalc100Item(id) {
+      if (pendingDelete.type === 'calc100' && String(pendingDelete.id) === String(id)) {
+        clearTimeout(pendingDelete.timer);
+        pendingDelete = { type: null, id: null, timer: null };
+        executeDeleteCalc100Item(id);
+      } else {
+        clearTimeout(pendingDelete.timer);
+        pendingDelete = {
+          type: 'calc100',
+          id: String(id),
+          timer: setTimeout(() => {
+            pendingDelete = { type: null, id: null, timer: null };
+            renderFoods100g();
+          }, 2500)
+        };
+        renderFoods100g();
+      }
+    }
+
+    function executeDeleteCalc100Item(id) {
+      const idx = state.foods100g.findIndex(item => String(item.id) === String(id));
+      if (idx === -1) return;
+      const [removed] = state.foods100g.splice(idx, 1);
+      if (document.getElementById('editCalc100Id').value === String(id)) cancelCalc100Edit();
+      lastDeletedRecord = { type: 'calc100', item: removed, index: idx };
+      saveState(false);
+      renderAll();
+      showToast(`Șters din Calc 100g: ${removed.name}`, true);
     }
 
     function undoLastDelete() {
@@ -1490,6 +1853,8 @@
         state.entries.splice(index, 0, item);
       } else if (type === 'bank') {
         state.foodBank.splice(index, 0, item);
+      } else if (type === 'calc100') {
+        state.foods100g.splice(index, 0, item);
       }
       lastDeletedRecord = null;
       saveState(false);
@@ -1504,117 +1869,6 @@
       saveState(false);
       renderAll();
       showToast(res.updated ? `Actualizat în Bancă: ${entry.name}` : `Salvat în Bancă: ${entry.name}`);
-    }
-
-    function formatScaledMealName(baseName, grams) {
-      const gStr = `${fmtComma(grams)}g`;
-      if (grams === 100 && /\d+\s*(g|ml)\b/i.test(baseName)) {
-        return baseName;
-      }
-      if (baseName.toLowerCase().includes(`(${gStr.toLowerCase()})`)) {
-        return baseName;
-      }
-      return `${baseName} (${gStr})`;
-    }
-
-    function sendBankItemToTracker(bankId, directAdd) {
-      const item = state.foodBank.find(b => String(b.id) === String(bankId));
-      if (!item) return;
-
-      const rawGrams = bankGramMap[bankId] !== undefined ? bankGramMap[bankId] : 100;
-      const scaled = getScaledBankItemValues(item, rawGrams);
-      if (scaled.grams <= 0) {
-        showToast('Introdu o cantitate în grame mai mare decât 0!');
-        return;
-      }
-
-      const finalName = formatScaledMealName(item.name, scaled.grams);
-      item.freq = (item.freq || 0) + 1;
-
-      if (directAdd) {
-        state.entries.push({
-          id: String(Date.now()),
-          date: state.currentDate,
-          name: finalName,
-          p: scaled.p,
-          f: scaled.f,
-          c: scaled.c
-        });
-        saveState(false);
-        renderAll();
-        showToast(`Adăugat în ${state.currentDate}: ${finalName}`);
-      } else {
-        switchTab('tracker');
-        document.getElementById('inputMealName').value = finalName;
-        document.getElementById('inputMealP').value = fmtComma(scaled.p);
-        document.getElementById('inputMealF').value = fmtComma(scaled.f);
-        document.getElementById('inputMealC').value = fmtComma(scaled.c);
-        updateLiveKcalPreview();
-        document.getElementById('addMealCardTop').scrollIntoView({ behavior: 'smooth' });
-        showToast(`Precompletat: ${finalName}`);
-      }
-    }
-
-    // Editare directă în Banca de Alimente
-    function startEditBankItem(bankId) {
-      const item = state.foodBank.find(b => b.id === bankId);
-      if (!item) return;
-      document.getElementById('editBankId').value = item.id;
-      document.getElementById('newBankName').value = item.name;
-      document.getElementById('newBankCat').value = item.cat || 'Mese Gătite';
-      document.getElementById('newBankP').value = fmtComma(item.p);
-      document.getElementById('newBankF').value = fmtComma(item.f);
-      document.getElementById('newBankC').value = fmtComma(item.c);
-      updateBankFormKcalPreview();
-
-      document.getElementById('bankFormTitleLabel').textContent = `✏️ Editezi (valori per 100g): ${item.name}`;
-      document.getElementById('bankFormTitleLabel').className = 'block text-[11px] text-amber-400 font-semibold mb-1';
-      document.getElementById('saveBankBtn').textContent = '💾 Actualizează';
-      document.getElementById('cancelBankEditBtn').classList.remove('hidden');
-      document.getElementById('bankFormCard').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function cancelBankEdit() {
-      document.getElementById('editBankId').value = '';
-      document.getElementById('newBankName').value = '';
-      document.getElementById('newBankP').value = '';
-      document.getElementById('newBankF').value = '';
-      document.getElementById('newBankC').value = '';
-      updateBankFormKcalPreview();
-      document.getElementById('bankFormTitleLabel').textContent = 'Denumire Aliment / Preparat (bază 100g)';
-      document.getElementById('bankFormTitleLabel').className = 'block text-[11px] text-slate-400 mb-1';
-      document.getElementById('saveBankBtn').textContent = '+ Salvează în Bancă';
-      document.getElementById('cancelBankEditBtn').classList.add('hidden');
-    }
-
-    function saveOrUpdateBankItem() {
-      const editId = document.getElementById('editBankId').value.trim();
-      const name = document.getElementById('newBankName').value.trim();
-      const cat = document.getElementById('newBankCat').value;
-      const p = parseNumInput(document.getElementById('newBankP').value);
-      const f = parseNumInput(document.getElementById('newBankF').value);
-      const c = parseNumInput(document.getElementById('newBankC').value);
-      if (!name) return;
-
-      if (editId) {
-        const existing = state.foodBank.find(b => b.id === editId);
-        if (existing) {
-          existing.name = name;
-          existing.cat = cat;
-          existing.p = p;
-          existing.f = f;
-          existing.c = c;
-          showToast(`Actualizat: ${name}`);
-        }
-        cancelBankEdit();
-      } else {
-        const res = upsertFoodBankItem(name, cat, p, f, c);
-        cancelBankEdit();
-        showToast(res.updated ? `Actualizat în Bancă: ${name}` : `Salvat în Bancă: ${name}`);
-      }
-
-      saveState(false);
-      renderAll();
     }
 
     function saveAndRecalcProfile() {
