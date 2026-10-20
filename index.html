@@ -38,7 +38,7 @@ function syncAllFromClient(payload) {
       var f = Number(r.f) || 0;
       var c = Number(r.c) || 0;
       // REPARAT AICI: Am scos ", 0" ca să meargă și pe Google Sheets în limba română
-      var kcalFormula = '=ROUND(C' + rowNum + '*4+D' + rowNum + '*9+E' + rowNum + '*4)';
+      var kcalFormula = '=ROUND(C' + rowNum + '*4 + D' + rowNum + '*9 + E' + rowNum + '*4; 0)';
       rows.push([r.date, r.name, p, f, c, kcalFormula]);
     });
 
