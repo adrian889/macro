@@ -79,13 +79,13 @@
         <div>
           <div class="flex items-center gap-2">
             <h1 class="font-bold text-sm sm:text-base bg-gradient-to-r from-white via-slate-100 to-emerald-300 bg-clip-text text-transparent leading-tight">
-              Macro Tracker
+              Macro Tracker RO
             </h1>
             <span id="syncStatusBadge" onclick="openCloudModal()" class="cursor-pointer text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-900 text-slate-400 border border-slate-700/80 transition hover:border-slate-600">
               ☁️ Verificare...
             </span>
           </div>
-          <p class="text-[11px] text-slate-400 tabular-nums" id="headerSubtitle">Țintă: 1874,2 kcal | P: 141,3g • G: 62,8g • C: 186g</p>
+          <p class="text-[11px] text-slate-400 tabular-nums" id="headerSubtitle">Țintă: 1891 kcal | P: 141,3g • G: 62,8g • C: 190g</p>
         </div>
       </div>
 
@@ -149,12 +149,12 @@
             </div>
             <div class="my-1.5">
               <span id="valDayKcal" class="text-2xl font-extrabold text-white">0</span>
-              <span class="text-xs text-slate-400">/ <span id="targetDayKcal">1874,2</span></span>
+              <span class="text-xs text-slate-400">/ <span id="targetDayKcal">1891</span></span>
             </div>
             <div class="w-full bg-slate-950/90 h-2 rounded-full overflow-hidden border border-slate-800/60">
               <div id="barDayKcal" class="bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-300 h-full transition-all duration-300" style="width: 0%"></div>
             </div>
-            <p id="remDayKcal" class="text-[11px] text-slate-300/90 mt-2">Rămas: 1874,2 kcal</p>
+            <p id="remDayKcal" class="text-[11px] text-slate-300/90 mt-2">Rămas: 1891 kcal</p>
           </div>
 
           <!-- Proteine -->
@@ -194,12 +194,12 @@
             </div>
             <div class="my-1.5">
               <span id="valDayC" class="text-2xl font-extrabold text-white">0</span>
-              <span class="text-xs text-slate-400">/ <span id="targetDayC">186,0</span>g</span>
+              <span class="text-xs text-slate-400">/ <span id="targetDayC">190</span>g</span>
             </div>
             <div class="w-full bg-slate-950/90 h-2 rounded-full overflow-hidden border border-slate-800/60">
               <div id="barDayC" class="bg-gradient-to-r from-violet-400 via-purple-500 to-fuchsia-500 h-full transition-all duration-300" style="width: 0%"></div>
             </div>
-            <p id="remDayC" class="text-[11px] text-slate-300/90 mt-2">Rămas: 186,0g</p>
+            <p id="remDayC" class="text-[11px] text-slate-300/90 mt-2">Rămas: 190g</p>
           </div>
 
         </div>
@@ -309,7 +309,7 @@
           <div class="card-kcal border border-emerald-500/20 rounded-2xl p-4 shadow-lg">
             <span class="text-xs text-slate-400 block">Media Calorică (7 zile complete)</span>
             <span id="statAvgKcal7" class="text-2xl font-extrabold text-white mt-1 block">0 kcal</span>
-            <span class="text-[11px] text-slate-400">Țintă: <span id="statTargetKcalRef" class="text-emerald-300 font-semibold">1874,2</span> kcal</span>
+            <span class="text-[11px] text-slate-400">Țintă: <span id="statTargetKcalRef" class="text-emerald-300 font-semibold">1891</span> kcal</span>
           </div>
           <div class="card-kcal border border-emerald-500/20 rounded-2xl p-4 shadow-lg">
             <span class="text-xs text-slate-400 block">Rată Aderență Calorii</span>
@@ -557,29 +557,29 @@
             <div class="px-5 py-2.5 flex justify-between items-center">
               <span class="text-slate-400">Procent Grăsime (US Navy + Calibrare DEXA)</span>
               <div class="text-right">
-                <span id="calcBF" class="font-bold text-amber-400">30,2%</span>
-                <span id="calcBFNote" class="text-xs text-slate-400 block">Navy: 18,5% + Offset: 11,7%</span>
+                <span id="calcBF" class="font-bold text-amber-400">29,5%</span>
+                <span id="calcBFNote" class="text-xs text-slate-400 block">Navy: 17,8% + Offset: 11,7%</span>
               </div>
             </div>
             <div class="px-5 py-2.5 flex justify-between items-center">
               <span class="text-slate-400">Masă Slabă (LBM — fără grăsime)</span>
-              <span id="calcLBM" class="font-bold text-white">54,79 kg</span>
+              <span id="calcLBM" class="font-bold text-white">55,34 kg</span>
             </div>
             <div class="px-5 py-2.5 flex justify-between items-center">
               <span class="text-slate-400">FFMI (Fat-Free Mass Index)</span>
-              <span id="calcFFMI" class="font-bold text-white">17,1</span>
+              <span id="calcFFMI" class="font-bold text-white">17,27</span>
             </div>
             <div class="px-5 py-2.5 flex justify-between items-center">
               <span class="text-slate-400">Raport Talie-Înălțime (Țintă: &lt; 0,50)</span>
-              <span id="calcWHtR" class="font-bold text-emerald-400">0,4916</span>
+              <span id="calcWHtR" class="font-bold text-emerald-400">0,4804</span>
             </div>
             <div class="px-5 py-2.5 flex justify-between items-center">
               <span class="text-slate-400">BMR (Katch-McArdle)</span>
-              <span id="calcBMR" class="font-bold text-white">1553 kcal</span>
+              <span id="calcBMR" class="font-bold text-white">1565 kcal</span>
             </div>
             <div class="px-5 py-2.5 flex justify-between items-center">
               <span class="text-slate-400">TDEE (Mentenanță)</span>
-              <span id="calcTDEE" class="font-bold text-slate-200">2174,2 kcal</span>
+              <span id="calcTDEE" class="font-bold text-slate-200">2191 kcal</span>
             </div>
             <div class="px-5 py-3.5 bg-slate-950/80">
               <span class="text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent block mb-2.5">
@@ -588,7 +588,7 @@
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
                 <div class="card-kcal p-2.5 rounded-xl border border-emerald-500/25">
                   <span class="text-[11px] text-emerald-300/90 block">Calorii Țintă</span>
-                  <span id="outTargetKcal" class="text-lg font-extrabold text-emerald-400">1874,2</span>
+                  <span id="outTargetKcal" class="text-lg font-extrabold text-emerald-400">1891</span>
                 </div>
                 <div class="card-prot p-2.5 rounded-xl border border-blue-500/25">
                   <span class="text-[11px] text-blue-400 block">Proteine Țintă</span>
@@ -600,7 +600,7 @@
                 </div>
                 <div class="card-carb p-2.5 rounded-xl border border-purple-500/25">
                   <span class="text-[11px] text-purple-400 block">Carbohidrați</span>
-                  <span id="outTargetC" class="text-lg font-extrabold text-white">186,0g</span>
+                  <span id="outTargetC" class="text-lg font-extrabold text-white">190g</span>
                 </div>
               </div>
             </div>
@@ -651,7 +651,7 @@
     const DEFAULT_CLOUD_URL = 'https://script.google.com/macros/s/AKfycbyXhrRjzTkYYEGJNO1TTbdorwNnNI7Zw4xAZSvaeLyGdmb4Hl8vttwtpc6c_quzaTNN/exec';
 
     const DEFAULT_PROFILE = {
-      age: 36, height: 179, weight: 78.5, neck: 38, waist: 88,
+      age: 36, height: 179, weight: 78.5, neck: 37, waist: 86,
       dexaOffset: 11.7, activityFactor: 1.40, calorieAdj: -300,
       proteinPerKg: 1.8, fatPerKg: 0.8
     };
@@ -670,6 +670,14 @@
 
     // Memorează cantitatea în grame selectată pe fiecare card din Calc 100g (implicit 100g)
     let calc100GramMap = {};
+
+    // Stare pentru tab-ul activ și secțiunile modificate (Dirty Flags pentru sincronizare diferențială)
+    let activeTab = 'tracker';
+    let dirtySections = new Set();
+
+    function markDirty(...sections) {
+      sections.forEach(s => dirtySections.add(s));
+    }
 
     // Stare pentru protecția la ștergere (dublu-tap "Sigur?" + Undo în Toast)
     let pendingDelete = { type: null, id: null, timer: null };
@@ -809,21 +817,25 @@
         if (Array.isArray(data.foodBank) && data.foodBank.length > 0) state.foodBank = data.foodBank;
         if (Array.isArray(data.foods100g)) state.foods100g = data.foods100g;
         if (data.profile) state.profile = { ...DEFAULT_PROFILE, ...data.profile };
+        dirtySections.clear();
         saveLocalOnly();
-        renderAll();
+        renderDatalistAndTopChips();
+        renderAll(true);
         updateSyncBadge('☁️ Sincronizat', 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30');
         if (showNotif) showToast('Datele au fost actualizate din Google Sheets!');
       }
     }
 
     function syncPushToSheets(showNotif) {
-      const payload = {
-        action: 'syncAll',
-        entries: state.entries,
-        foodBank: state.foodBank,
-        foods100g: state.foods100g,
-        profile: state.profile
-      };
+      const sendAll = showNotif || dirtySections.size === 0;
+      const payload = { action: 'syncAll' };
+
+      if (sendAll || dirtySections.has('entries'))  payload.entries = state.entries;
+      if (sendAll || dirtySections.has('foodBank')) payload.foodBank = state.foodBank;
+      if (sendAll || dirtySections.has('foods100g')) payload.foods100g = state.foods100g;
+      if (sendAll || dirtySections.has('profile'))  payload.profile = state.profile;
+
+      dirtySections.clear();
 
       if (IS_GAS_NATIVE) {
         updateSyncBadge('⬆️ Salvare în Sheets...', 'bg-amber-500/20 text-amber-300 border-amber-500/30 syncing-anim');
@@ -885,7 +897,7 @@
       const bfNavy = (495 / (1.0324 - 0.19077 * Math.log10(waistMinusNeck) + 0.15456 * Math.log10(p.height))) - 450;
       const bfTotal = Number((bfNavy + p.dexaOffset).toFixed(1));
       const lbm = Number((p.weight * (1 - bfTotal / 100)).toFixed(2));
-      const ffmi = Number((lbm / (hM * hM)).toFixed(1));
+      const ffmi = Number((lbm / (hM * hM)).toFixed(2));
       const whtr = Number((p.waist / p.height).toFixed(4));
       const bmr = Math.round(370 + 21.6 * lbm);
       const tdee = Number((bmr * p.activityFactor).toFixed(1));
@@ -902,18 +914,25 @@
       return Math.round(parseNumInput(p) * 4 + parseNumInput(f) * 9 + parseNumInput(c) * 4);
     }
 
-    // ==================== RANDARE UI ====================
-    function renderAll() {
+    // ==================== RANDARE UI SELECTIVĂ ====================
+    function renderAll(forceAllTabs = false) {
       const targets = computeTargets();
       document.getElementById('headerSubtitle').textContent =
         `Țintă: ${fmtComma(targets.targetKcal)} kcal | P: ${fmtComma(targets.targetP)}g • G: ${fmtComma(targets.targetF)}g • C: ${fmtComma(targets.targetC)}g`;
 
-      renderTrackerTab(targets);
-      renderAdherenceStats(targets);
-      renderFoodBank();
-      renderFoods100g();
-      renderProfileTab(targets);
-      renderDatalistAndTopChips();
+      if (forceAllTabs || activeTab === 'tracker') {
+        renderTrackerTab(targets);
+        renderAdherenceStats(targets);
+      }
+      if (forceAllTabs || activeTab === 'banca') {
+        renderFoodBank();
+      }
+      if (forceAllTabs || activeTab === 'calc100') {
+        renderFoods100g();
+      }
+      if (forceAllTabs || activeTab === 'date') {
+        renderProfileTab(targets);
+      }
     }
 
     function renderTrackerTab(targets) {
@@ -1257,6 +1276,7 @@
       const f = Number(item.f) || 0;
       const c = Number(item.c) || 0;
       item.freq = (Number(item.freq) || 0) + 1;
+      markDirty('foodBank');
 
       if (directAdd) {
         state.entries.push({
@@ -1267,10 +1287,14 @@
           f,
           c
         });
+        markDirty('entries');
         saveState(false);
+        renderDatalistAndTopChips();
         renderAll();
         showToast(`Adăugat în ${state.currentDate}: ${item.name}`);
       } else {
+        saveState(true);
+        renderDatalistAndTopChips();
         switchTab('tracker');
         document.getElementById('inputMealName').value = item.name;
         document.getElementById('inputMealP').value = fmtComma(p);
@@ -1339,7 +1363,9 @@
         showToast(res.updated ? `Actualizat în Bancă: ${name}` : `Salvat în Bancă: ${name}`);
       }
 
+      markDirty('foodBank');
       saveState(false);
+      renderDatalistAndTopChips();
       renderAll();
     }
 
@@ -1395,7 +1421,7 @@
                 Ref. 100g: P ${fmtComma(item.p)}g • G ${fmtComma(item.f)}g • C ${fmtComma(item.c)}g (${baseKcal} kcal)
               </p>
 
-              <!-- Calculator dinamic la gramaj pe card (fără butoane rapide 50g/100g/etc.) -->
+              <!-- Calculator dinamic la gramaj pe card -->
               <div class="mt-3 p-2.5 rounded-xl bg-slate-950/85 border border-slate-800/90 space-y-2">
                 <div class="flex items-center justify-between gap-2">
                   <label for="calc100GramInput_${item.id}" class="text-[11px] font-semibold text-emerald-400 flex items-center gap-1">
@@ -1488,6 +1514,7 @@
 
       const finalName = formatScaledMealName(item.name, scaled.grams);
       item.freq = (Number(item.freq) || 0) + 1;
+      markDirty('foods100g');
 
       if (directAdd) {
         state.entries.push({
@@ -1498,10 +1525,12 @@
           f: scaled.f,
           c: scaled.c
         });
+        markDirty('entries');
         saveState(false);
         renderAll();
         showToast(`Adăugat în ${state.currentDate}: ${finalName}`);
       } else {
+        saveState(true);
         switchTab('tracker');
         document.getElementById('inputMealName').value = finalName;
         document.getElementById('inputMealP').value = fmtComma(scaled.p);
@@ -1587,6 +1616,7 @@
         showToast(res.updated ? `Actualizat în Calc 100g: ${name}` : `Salvat în Calc 100g: ${name}`);
       }
 
+      markDirty('foods100g');
       saveState(false);
       renderAll();
     }
@@ -1652,7 +1682,9 @@
         f: Number(item.f) || 0,
         c: Number(item.c) || 0
       });
+      markDirty('entries', 'foodBank');
       saveState(false);
+      renderDatalistAndTopChips();
       renderAll();
       showToast(`Adăugat rapid: ${item.name}`);
     }
@@ -1666,6 +1698,7 @@
 
     // ==================== ACȚIUNI UTILIZATOR ====================
     function switchTab(tab) {
+      activeTab = tab;
       ['tracker', 'banca', 'calc100', 'date'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
         const btn = document.getElementById(`tabBtn-${t}`);
@@ -1675,6 +1708,7 @@
             : 'px-3 py-1.5 rounded-lg font-medium transition text-slate-400 hover:text-white whitespace-nowrap';
         }
       });
+      renderAll();
     }
 
     function onDateChange(val) { if (val) { state.currentDate = val; renderAll(); } }
@@ -1713,12 +1747,20 @@
       if (!rawName) { showToast('Te rog introdu numele mesei!'); return; }
 
       state.entries.push({ id: String(Date.now()), date: state.currentDate, name: rawName, p, f, c });
+      markDirty('entries');
 
+      let bankUpdated = false;
       if (document.getElementById('saveToBankCheck').checked) {
         upsertFoodBankItem(rawName, 'Mese Gătite', p, f, c);
+        markDirty('foodBank');
+        bankUpdated = true;
       } else {
         const existingInBank = state.foodBank.find(b => b.name.trim().toLowerCase() === rawName.toLowerCase());
-        if (existingInBank) existingInBank.freq = (Number(existingInBank.freq) || 0) + 1;
+        if (existingInBank) {
+          existingInBank.freq = (Number(existingInBank.freq) || 0) + 1;
+          markDirty('foodBank');
+          bankUpdated = true;
+        }
       }
 
       document.getElementById('inputMealName').value = '';
@@ -1728,6 +1770,7 @@
       document.getElementById('liveKcalPreview').textContent = '0';
 
       saveState(false);
+      if (bankUpdated) renderDatalistAndTopChips();
       renderAll();
       showToast(`Adăugat: ${rawName}`);
     }
@@ -1743,6 +1786,7 @@
         f: entry.f,
         c: entry.c
       });
+      markDirty('entries');
       saveState(false);
       renderAll();
       showToast(`Duplicat: ${entry.name}`);
@@ -1752,6 +1796,7 @@
       const entry = state.entries.find(e => String(e.id) === String(id));
       if (!entry) return;
       entry[field] = field === 'name' ? value : parseNumInput(value);
+      markDirty('entries');
       saveState(true); // Debounce 800ms
       renderAll();
     }
@@ -1781,6 +1826,7 @@
       if (idx === -1) return;
       const [removed] = state.entries.splice(idx, 1);
       lastDeletedRecord = { type: 'entry', item: removed, index: idx };
+      markDirty('entries');
       saveState(false);
       renderAll();
       showToast(`Șters: ${removed.name}`, true);
@@ -1811,7 +1857,9 @@
       const [removed] = state.foodBank.splice(idx, 1);
       if (document.getElementById('editBankId').value === String(id)) cancelBankEdit();
       lastDeletedRecord = { type: 'bank', item: removed, index: idx };
+      markDirty('foodBank');
       saveState(false);
+      renderDatalistAndTopChips();
       renderAll();
       showToast(`Șters din Bancă: ${removed.name}`, true);
     }
@@ -1841,6 +1889,7 @@
       const [removed] = state.foods100g.splice(idx, 1);
       if (document.getElementById('editCalc100Id').value === String(id)) cancelCalc100Edit();
       lastDeletedRecord = { type: 'calc100', item: removed, index: idx };
+      markDirty('foods100g');
       saveState(false);
       renderAll();
       showToast(`Șters din Calc 100g: ${removed.name}`, true);
@@ -1851,10 +1900,14 @@
       const { type, item, index } = lastDeletedRecord;
       if (type === 'entry') {
         state.entries.splice(index, 0, item);
+        markDirty('entries');
       } else if (type === 'bank') {
         state.foodBank.splice(index, 0, item);
+        markDirty('foodBank');
+        renderDatalistAndTopChips();
       } else if (type === 'calc100') {
         state.foods100g.splice(index, 0, item);
+        markDirty('foods100g');
       }
       lastDeletedRecord = null;
       saveState(false);
@@ -1866,7 +1919,9 @@
       const entry = state.entries.find(e => String(e.id) === String(id));
       if (!entry) return;
       const res = upsertFoodBankItem(entry.name, 'Mese Gătite', entry.p, entry.f, entry.c);
+      markDirty('foodBank');
       saveState(false);
+      renderDatalistAndTopChips();
       renderAll();
       showToast(res.updated ? `Actualizat în Bancă: ${entry.name}` : `Salvat în Bancă: ${entry.name}`);
     }
@@ -1876,20 +1931,22 @@
         age: parseNumInput(document.getElementById('profAge').value) || 36,
         height: parseNumInput(document.getElementById('profHeight').value) || 179,
         weight: parseNumInput(document.getElementById('profWeight').value) || 78.5,
-        neck: parseNumInput(document.getElementById('profNeck').value) || 38,
-        waist: parseNumInput(document.getElementById('profWaist').value) || 88,
+        neck: parseNumInput(document.getElementById('profNeck').value) || 37,
+        waist: parseNumInput(document.getElementById('profWaist').value) || 86,
         dexaOffset: parseNumInput(document.getElementById('profDexaOffset').value) || 0,
         activityFactor: parseNumInput(document.getElementById('profActivity').value) || 1.4,
         calorieAdj: parseNumInput(document.getElementById('profCalorieAdj').value) || 0,
         proteinPerKg: parseNumInput(document.getElementById('profProteinPerKg').value) || 1.8,
         fatPerKg: parseNumInput(document.getElementById('profFatPerKg').value) || 0.8
       };
+      markDirty('profile');
       saveState(true); // Debounce 800ms la modificarea profilului
       renderAll();
     }
 
     function resetProfileDefaults() {
       state.profile = { ...DEFAULT_PROFILE };
+      markDirty('profile');
       saveState(false);
       renderAll();
       showToast('Resetat la valorile din Excel!');
@@ -1916,7 +1973,8 @@
 
     // Init
     loadState();
-    renderAll();
+    renderDatalistAndTopChips();
+    renderAll(true);
     if (IS_GAS_NATIVE || state.cloudUrl) {
       syncPullFromSheets(false);
     }
