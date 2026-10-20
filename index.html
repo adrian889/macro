@@ -923,7 +923,7 @@
 
     function applyCloudData(data, showNotif) {
       if (data && data.status === 'ok') {
-        if (Array.isArray(data.entries) && data.entries.length > 0) state.entries = data.entries;
+        if (Array.isArray(data.entries)) state.entries = data.entries;
         if (Array.isArray(data.foodBank) && data.foodBank.length > 0) state.foodBank = data.foodBank;
         if (Array.isArray(data.foods100g)) state.foods100g = data.foods100g;
         if (data.profile) state.profile = { ...DEFAULT_PROFILE, ...data.profile };
@@ -2052,6 +2052,20 @@
     if (IS_GAS_NATIVE || state.cloudUrl) {
       syncPullFromSheets(false);
     }
+
+    // Reîncarcă automat datele când redeschizi aplicația pe telefon
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        const today = getLocalTodayStr();
+        if (state.currentDate !== today) {
+          state.currentDate = today;
+          renderAll();
+        }
+        if (dirtySections.size === 0 && (IS_GAS_NATIVE || state.cloudUrl)) {
+          syncPullFromSheets(false);
+        }
+      }
+    });
   </script>
 </body>
 </html>
