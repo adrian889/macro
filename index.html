@@ -1111,22 +1111,27 @@
           `;
         }).join('');
 
-        // 2. Randare Carduri Compacte pe 2 Rânduri pentru Mobil (< 640px)
+        // 2. Randare Carduri Compacte pentru Mobil (< 640px)
         mobileBody.innerHTML = dayEntries.map((item, idx) => {
           const k = calcKcal(item.p, item.f, item.c);
           const isConfirming = (pendingDelete.type === 'entry' && String(pendingDelete.id) === String(item.id));
           return `
             <div class="p-3 space-y-2 hover:bg-slate-900/40 transition tabular-nums">
-              <!-- Rândul 1: # + Nume Masă + Calorii + Acțiuni -->
-              <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[11px] font-bold text-slate-500 shrink-0">#${idx + 1}</span>
-                <input type="text" value="${escapeHtml(item.name)}" onchange="updateEntryField('${item.id}', 'name', this.value)"
-                  class="flex-1 min-w-0 bg-transparent border-b border-transparent focus:border-indigo-500 focus:bg-slate-950 px-1 py-0.5 rounded text-sm font-semibold text-white focus:outline-none" />
-                <span class="text-xs font-extrabold text-lime-400 bg-lime-500/10 border border-lime-500/25 px-2 py-0.5 rounded-lg shrink-0">${k} kcal</span>
-                <div class="flex items-center gap-1 shrink-0">
-                  <button onclick="duplicateEntry('${item.id}')" title="Duplică" class="text-xs px-2 py-1 rounded-lg bg-slate-850 border border-slate-700/70 text-indigo-300 active:scale-95">➕</button>
-                  <button onclick="saveEntryToBank('${item.id}')" title="Salvează în Bancă" class="text-xs px-2 py-1 rounded-lg bg-slate-850 border border-slate-700/70 text-slate-300 active:scale-95">🏦</button>
-                  <button onclick="requestDeleteEntry('${item.id}')" title="Șterge" class="text-xs rounded-lg transition active:scale-95 ${isConfirming ? 'px-2.5 py-1 bg-rose-600 text-white font-bold ring-2 ring-rose-400/60' : 'px-2 py-1 bg-rose-950/60 border border-rose-800/40 text-rose-300'}">${isConfirming ? 'Sigur?' : '✕'}</button>
+              <!-- Rândul 1: # + Nume Masă (pe toată lățimea, afișat integral) -->
+              <div class="flex items-start gap-1.5">
+                <span class="text-[11px] font-bold text-slate-500 shrink-0 mt-1">#${idx + 1}</span>
+                <div contenteditable="true"
+                  onblur="updateEntryField('${item.id}', 'name', this.innerText.trim())"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+                  class="flex-1 min-w-0 bg-transparent border-b border-transparent focus:border-indigo-500 focus:bg-slate-950 px-1 py-0.5 rounded text-sm font-semibold text-white focus:outline-none break-words leading-snug">${escapeHtml(item.name)}</div>
+              </div>
+              <!-- Rândul 2: Calorii + Butoane Acțiuni -->
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-extrabold text-lime-400 bg-lime-500/10 border border-lime-500/25 px-2.5 py-0.5 rounded-lg shrink-0">${k} kcal</span>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button onclick="duplicateEntry('${item.id}')" title="Duplică" class="text-xs px-2.5 py-1 rounded-lg bg-slate-850 border border-slate-700/70 text-indigo-300 active:scale-95">➕</button>
+                  <button onclick="saveEntryToBank('${item.id}')" title="Salvează în Bancă" class="text-xs px-2.5 py-1 rounded-lg bg-slate-850 border border-slate-700/70 text-slate-300 active:scale-95">🏦</button>
+                  <button onclick="requestDeleteEntry('${item.id}')" title="Șterge" class="text-xs rounded-lg transition active:scale-95 ${isConfirming ? 'px-2.5 py-1 bg-rose-600 text-white font-bold ring-2 ring-rose-400/60' : 'px-2.5 py-1 bg-rose-950/60 border border-rose-800/40 text-rose-300'}">${isConfirming ? 'Sigur?' : '✕'}</button>
                 </div>
               </div>
               <!-- Rândul 2: Cele 3 valori editabile P, G, C -->
