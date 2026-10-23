@@ -205,7 +205,6 @@
               ☁️ Verificare...
             </span>
           </div>
-          <p class="text-[10px] sm:text-[11px] text-slate-400 tabular-nums truncate" id="headerSubtitle">Țintă: 1891 kcal | P: 141,3g • G: 62,8g • C: 190g</p>
         </div>
       </div>
 
@@ -1117,8 +1116,8 @@
     // ==================== RANDARE UI SELECTIVĂ ====================
     function renderAll(forceAllTabs = false) {
       const targets = computeTargets();
-      document.getElementById('headerSubtitle').textContent =
-        `Țintă: ${fmtComma(targets.targetKcal)} kcal | P: ${fmtComma(targets.targetP)}g • G: ${fmtComma(targets.targetF)}g • C: ${fmtComma(targets.targetC)}g`;
+      //document.getElementById('headerSubtitle').textContent =
+      //  `Țintă: ${fmtComma(targets.targetKcal)} kcal | P: ${fmtComma(targets.targetP)}g • G: ${fmtComma(targets.targetF)}g • C: ${fmtComma(targets.targetC)}g`;
 
       renderMiniStatusBanner(targets);
 
