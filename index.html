@@ -180,33 +180,38 @@
       box-shadow: 0 8px 25px -5px rgba(232, 121, 249, 0.18);
       transform: translateY(-2px);
     }
+
+    /* Safe area pentru bara de jos pe iOS / Android */
+    .pb-safe {
+      padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
+    }
   </style>
 </head>
-<body class="min-h-screen pb-16">
+<body class="min-h-screen pb-24 sm:pb-16">
 
-  <!-- HEADER & NAV -->
+  <!-- HEADER COMPACT (Pe un singur rând pe mobil, cu Nav integrat doar pe >= 640px) -->
   <header class="sticky top-0 z-30 bg-slate-950/85 backdrop-blur-md border-b border-slate-800/80 shadow-lg shadow-black/40">
-    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 flex flex-wrap items-center justify-between gap-2">
-      <div class="flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-xl btn-cyber flex items-center justify-center font-extrabold text-white text-base shadow-md shadow-indigo-950/70">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl btn-cyber flex items-center justify-center font-extrabold text-white text-sm sm:text-base shadow-md shadow-indigo-950/70 shrink-0">
           M
         </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-bold text-sm sm:text-base bg-gradient-to-r from-white via-indigo-200 to-fuchsia-300 bg-clip-text text-transparent leading-tight">
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <h1 class="font-bold text-sm sm:text-base bg-gradient-to-r from-white via-indigo-200 to-fuchsia-300 bg-clip-text text-transparent leading-tight truncate">
               Macro Tracker
             </h1>
-            <span id="syncStatusBadge" onclick="openCloudModal()" class="cursor-pointer text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-900 text-slate-400 border border-slate-700/80 transition hover:border-indigo-500/50">
+            <span id="syncStatusBadge" onclick="openCloudModal()" class="cursor-pointer text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-900 text-slate-400 border border-slate-700/80 transition hover:border-indigo-500/50 shrink-0">
               ☁️ Verificare...
             </span>
           </div>
-          <p class="text-[11px] text-slate-400 tabular-nums" id="headerSubtitle">Țintă: 1891 kcal | P: 141,3g • G: 62,8g • C: 190g</p>
+          <p class="text-[10px] sm:text-[11px] text-slate-400 tabular-nums truncate" id="headerSubtitle">Țintă: 1891 kcal | P: 141,3g • G: 62,8g • C: 190g</p>
         </div>
       </div>
 
-      <!-- Navigation Tabs + Refresh -->
-      <div class="flex items-center gap-1.5 w-full sm:w-auto justify-between sm:justify-end">
-        <nav class="flex items-center gap-1 bg-slate-950/90 p-1 rounded-xl border border-slate-800/90 text-xs overflow-x-auto no-scrollbar">
+      <!-- Navigation Tabs (Desktop/Tabletă) + Buton Refresh -->
+      <div class="flex items-center gap-1.5 shrink-0">
+        <nav class="hidden sm:flex items-center gap-1 bg-slate-950/90 p-1 rounded-xl border border-slate-800/90 text-xs">
           <button onclick="switchTab('tracker')" id="tabBtn-tracker" class="px-3 py-1.5 rounded-lg font-semibold btn-cyber text-white shadow-sm shadow-indigo-950/80 whitespace-nowrap">
             📋 Tracker
           </button>
@@ -226,7 +231,40 @@
         </button>
       </div>
     </div>
+
+    <!-- MINI-BARĂ DE STATUS PENTRU BANCĂ & CALC 100G (Elimină contextul orb la cântărire) -->
+    <div id="miniStatusBanner" class="hidden border-t border-slate-800/80 bg-slate-900/95 backdrop-blur-md">
+      <div class="max-w-7xl mx-auto px-3 sm:px-4 py-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[11px] sm:text-xs tabular-nums">
+        <div class="flex items-center gap-1.5 text-slate-300 font-medium">
+          <span class="inline-block w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+          <span>Rămas azi (<strong id="miniBannerDate" class="text-indigo-300"></strong>):</span>
+        </div>
+        <div id="miniBannerValues" class="flex items-center gap-2 sm:gap-3 font-semibold ml-auto sm:ml-0"></div>
+      </div>
+    </div>
   </header>
+
+  <!-- BOTTOM NAVIGATION BAR PENTRU MOBIL (< 640px) -->
+  <nav class="sm:hidden fixed bottom-0 inset-x-0 z-40 bg-slate-950/90 backdrop-blur-lg border-t border-slate-800/90 px-2 pt-1.5 pb-safe shadow-[0_-8px_25px_rgba(0,0,0,0.6)]">
+    <div class="grid grid-cols-4 gap-1 text-[11px]">
+      <button onclick="switchTab('tracker')" id="mobTabBtn-tracker" class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl font-semibold btn-cyber text-white shadow-sm shadow-indigo-950/80">
+        <span class="text-sm leading-none mb-0.5">📋</span>
+        <span>Tracker</span>
+      </button>
+      <button onclick="switchTab('banca')" id="mobTabBtn-banca" class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl font-medium text-slate-400 hover:text-white transition">
+        <span class="text-sm leading-none mb-0.5">🏦</span>
+        <span>Bancă</span>
+      </button>
+      <button onclick="switchTab('calc100')" id="mobTabBtn-calc100" class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl font-medium text-slate-400 hover:text-white transition">
+        <span class="text-sm leading-none mb-0.5">⚖️</span>
+        <span>Calc 100g</span>
+      </button>
+      <button onclick="switchTab('date')" id="mobTabBtn-date" class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl font-medium text-slate-400 hover:text-white transition">
+        <span class="text-sm leading-none mb-0.5">⚙️</span>
+        <span>Date</span>
+      </button>
+    </div>
+  </nav>
 
   <main class="max-w-7xl mx-auto px-3 sm:px-4 pt-4 space-y-5">
 
@@ -339,7 +377,7 @@
           <div class="grid grid-cols-6 sm:grid-cols-12 gap-2.5 sm:gap-3 items-end">
             <!-- Nume Masă -->
             <div class="col-span-6 sm:col-span-4 relative">
-              <label class="block text-xs text-slate-400 mb-1">Meal / Item (Denumire masă)</label>
+              <label class="block text-xs text-slate-400 mb-1">Meal / Item (caută în Bancă & Calc 100g)</label>
               <input type="text" id="inputMealName" list="foodBankDatalist" oninput="onMealNameInput(this.value)" placeholder="Ex: Ciorbă de fasole, True Whey 30g..." class="w-full bg-slate-950/90 border border-slate-700/80 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition" />
               <datalist id="foodBankDatalist"></datalist>
             </div>
@@ -347,17 +385,17 @@
             <!-- P, G, C -->
             <div class="col-span-2 sm:col-span-2">
               <label class="block text-xs text-sky-400 font-medium mb-1">P (g)</label>
-              <input type="text" inputmode="decimal" id="inputMealP" oninput="updateLiveKcalPreview()" placeholder="0" class="w-full bg-slate-950/90 border border-slate-700/80 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-sky-400 transition tabular-nums" />
+              <input type="text" inputmode="decimal" onfocus="this.select()" id="inputMealP" oninput="updateLiveKcalPreview()" placeholder="0" class="w-full bg-slate-950/90 border border-slate-700/80 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-sky-400 transition tabular-nums" />
             </div>
 
             <div class="col-span-2 sm:col-span-2">
               <label class="block text-xs text-teal-400 font-medium mb-1">G (g)</label>
-              <input type="text" inputmode="decimal" id="inputMealF" oninput="updateLiveKcalPreview()" placeholder="0" class="w-full bg-slate-950/90 border border-slate-700/80 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-teal-400 transition tabular-nums" />
+              <input type="text" inputmode="decimal" onfocus="this.select()" id="inputMealF" oninput="updateLiveKcalPreview()" placeholder="0" class="w-full bg-slate-950/90 border border-slate-700/80 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-teal-400 transition tabular-nums" />
             </div>
 
             <div class="col-span-2 sm:col-span-2">
               <label class="block text-xs text-fuchsia-400 font-medium mb-1">Carbs (g)</label>
-              <input type="text" inputmode="decimal" id="inputMealC" oninput="updateLiveKcalPreview()" placeholder="0" class="w-full bg-slate-950/90 border border-slate-700/80 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-fuchsia-400 transition tabular-nums" />
+              <input type="text" inputmode="decimal" onfocus="this.select()" id="inputMealC" oninput="updateLiveKcalPreview()" placeholder="0" class="w-full bg-slate-950/90 border border-slate-700/80 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-fuchsia-400 transition tabular-nums" />
             </div>
 
             <!-- Buton Adaugă -->
@@ -372,7 +410,7 @@
 
       </div>
 
-      <!-- 3. MESELE ÎNREGISTRATE ÎN ZIUA CURENTĂ (Carduri Compacte pe Mobil / Tabel pe Desktop) -->
+      <!-- 3. MESELE ÎNREGISTRATE ÎN ZIUA CURENTĂ (Carduri Compacte pe 2 rânduri pe Mobil / Tabel pe Desktop) -->
       <div class="glass-card border border-slate-800/90 rounded-2xl overflow-hidden shadow-xl">
         <div class="px-4 py-3 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/40">
           <h3 class="font-bold text-sm sm:text-base text-white">
@@ -487,15 +525,15 @@
           </div>
           <div class="col-span-1 sm:col-span-1">
             <label class="block text-[11px] text-sky-400 font-medium mb-1">P (g)</label>
-            <input type="text" inputmode="decimal" id="newBankP" oninput="updateBankFormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-sky-400 tabular-nums transition" />
+            <input type="text" inputmode="decimal" onfocus="this.select()" id="newBankP" oninput="updateBankFormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-sky-400 tabular-nums transition" />
           </div>
           <div class="col-span-1 sm:col-span-1">
             <label class="block text-[11px] text-teal-400 font-medium mb-1">G (g)</label>
-            <input type="text" inputmode="decimal" id="newBankF" oninput="updateBankFormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-teal-400 tabular-nums transition" />
+            <input type="text" inputmode="decimal" onfocus="this.select()" id="newBankF" oninput="updateBankFormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-teal-400 tabular-nums transition" />
           </div>
           <div class="col-span-1 sm:col-span-2">
             <label class="block text-[11px] text-fuchsia-400 font-medium mb-1">C (g)</label>
-            <input type="text" inputmode="decimal" id="newBankC" oninput="updateBankFormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-fuchsia-400 tabular-nums transition" />
+            <input type="text" inputmode="decimal" onfocus="this.select()" id="newBankC" oninput="updateBankFormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-fuchsia-400 tabular-nums transition" />
           </div>
           <div class="col-span-3 sm:col-span-2 flex flex-col">
             <span class="text-[10px] text-slate-400 mb-1 sm:text-right">Total = <strong id="bankFormKcalPreview" class="text-lime-400 tabular-nums">0</strong> kcal</span>
@@ -556,15 +594,15 @@
           </div>
           <div class="col-span-1 sm:col-span-1">
             <label class="block text-[11px] text-sky-400 font-medium mb-1">P / 100g</label>
-            <input type="text" inputmode="decimal" id="newCalc100P" oninput="updateCalc100FormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-sky-400 tabular-nums transition" />
+            <input type="text" inputmode="decimal" onfocus="this.select()" id="newCalc100P" oninput="updateCalc100FormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-sky-400 tabular-nums transition" />
           </div>
           <div class="col-span-1 sm:col-span-1">
             <label class="block text-[11px] text-teal-400 font-medium mb-1">G / 100g</label>
-            <input type="text" inputmode="decimal" id="newCalc100F" oninput="updateCalc100FormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-teal-400 tabular-nums transition" />
+            <input type="text" inputmode="decimal" onfocus="this.select()" id="newCalc100F" oninput="updateCalc100FormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-teal-400 tabular-nums transition" />
           </div>
           <div class="col-span-1 sm:col-span-2">
             <label class="block text-[11px] text-fuchsia-400 font-medium mb-1">C / 100g</label>
-            <input type="text" inputmode="decimal" id="newCalc100C" oninput="updateCalc100FormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-fuchsia-400 tabular-nums transition" />
+            <input type="text" inputmode="decimal" onfocus="this.select()" id="newCalc100C" oninput="updateCalc100FormKcalPreview()" placeholder="0" class="w-full bg-slate-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-fuchsia-400 tabular-nums transition" />
           </div>
           <div class="col-span-3 sm:col-span-2 flex flex-col">
             <span class="text-[10px] text-slate-400 mb-1 sm:text-right">100g = <strong id="calc100FormKcalPreview" class="text-lime-400 tabular-nums">0</strong> kcal</span>
@@ -599,27 +637,27 @@
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <div>
               <label class="block text-xs text-slate-400 mb-1">Vârstă (ani)</label>
-              <input type="text" inputmode="numeric" id="profAge" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition" />
+              <input type="text" inputmode="numeric" onfocus="this.select()" id="profAge" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition" />
             </div>
             <div>
               <label class="block text-xs text-slate-400 mb-1">Înălțime (cm)</label>
-              <input type="text" inputmode="decimal" id="profHeight" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition" />
+              <input type="text" inputmode="decimal" onfocus="this.select()" id="profHeight" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition" />
             </div>
             <div>
               <label class="block text-xs text-indigo-400 font-medium mb-1">Greutate Actuală (kg)</label>
-              <input type="text" inputmode="decimal" id="profWeight" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-indigo-500/60 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-indigo-400 transition" />
+              <input type="text" inputmode="decimal" onfocus="this.select()" id="profWeight" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-indigo-500/60 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-indigo-400 transition" />
             </div>
             <div>
               <label class="block text-xs text-slate-400 mb-1">Circumferință Gât (cm)</label>
-              <input type="text" inputmode="decimal" id="profNeck" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition" />
+              <input type="text" inputmode="decimal" onfocus="this.select()" id="profNeck" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition" />
             </div>
             <div>
               <label class="block text-xs text-slate-400 mb-1">Circumferință Talie (cm)</label>
-              <input type="text" inputmode="decimal" id="profWaist" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition" />
+              <input type="text" inputmode="decimal" onfocus="this.select()" id="profWaist" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition" />
             </div>
             <div>
               <label class="block text-xs text-amber-400 mb-1">Offset DEXA Grăsime (%)</label>
-              <input type="text" inputmode="decimal" id="profDexaOffset" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500 transition" />
+              <input type="text" inputmode="decimal" onfocus="this.select()" id="profDexaOffset" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500 transition" />
             </div>
           </div>
 
@@ -628,22 +666,22 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs text-slate-400 mb-1">Factor Activitate Fizică (1,40 PPL)</label>
-                <input type="text" inputmode="decimal" id="profActivity" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition" />
+                <input type="text" inputmode="decimal" onfocus="this.select()" id="profActivity" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition" />
               </div>
               <div>
                 <label class="block text-xs text-slate-400 mb-1">Ajustare Calorii (kcal vs TDEE)</label>
-                <input type="text" inputmode="decimal" id="profCalorieAdj" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-lime-400 transition" />
+                <input type="text" inputmode="decimal" onfocus="this.select()" id="profCalorieAdj" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-lime-400 transition" />
               </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
               <div>
                 <label class="block text-xs text-sky-400 mb-1">Multiplicator Proteine (g / kg corp)</label>
-                <input type="text" inputmode="decimal" id="profProteinPerKg" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-400 transition" />
+                <input type="text" inputmode="decimal" onfocus="this.select()" id="profProteinPerKg" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-400 transition" />
               </div>
               <div>
                 <label class="block text-xs text-teal-400 mb-1">Multiplicator Grăsimi (g / kg corp)</label>
-                <input type="text" inputmode="decimal" id="profFatPerKg" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-teal-400 transition" />
+                <input type="text" inputmode="decimal" onfocus="this.select()" id="profFatPerKg" oninput="saveAndRecalcProfile()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-teal-400 transition" />
               </div>
             </div>
           </div>
@@ -748,8 +786,8 @@
     </div>
   </div>
 
-  <!-- Toast (cu suport pentru buton Undo) -->
-  <div id="toastBox" class="fixed bottom-5 right-4 left-4 sm:left-auto sm:right-5 z-50 hidden bg-slate-900/95 border border-indigo-500/40 text-white px-4 py-2.5 rounded-xl shadow-xl shadow-black/70 text-xs sm:text-sm font-semibold flex items-center justify-between gap-3 backdrop-blur-md">
+  <!-- Toast (ridicat la bottom-20 pe mobil pentru a nu se suprapune cu Bottom Nav) -->
+  <div id="toastBox" class="fixed bottom-20 sm:bottom-5 right-4 left-4 sm:left-auto sm:right-5 z-50 hidden bg-slate-900/95 border border-indigo-500/40 text-white px-4 py-2.5 rounded-xl shadow-xl shadow-black/70 text-xs sm:text-sm font-semibold flex items-center justify-between gap-3 backdrop-blur-md">
     <span id="toastText"></span>
     <button id="toastUndoBtn" onclick="undoLastDelete()" class="hidden btn-cyber text-white font-bold px-2.5 py-1 rounded-lg text-xs transition shrink-0">
       ↩ Anulează (Undo)
@@ -871,15 +909,15 @@
       const badge = document.getElementById('syncStatusBadge');
       if (text) {
         badge.textContent = text;
-        badge.className = `cursor-pointer text-[10px] px-2 py-0.5 rounded-full font-semibold border whitespace-nowrap ${classes}`;
+        badge.className = `cursor-pointer text-[10px] px-2 py-0.5 rounded-full font-semibold border whitespace-nowrap shrink-0 ${classes}`;
         return;
       }
       if (IS_GAS_NATIVE || state.cloudUrl) {
         badge.textContent = '☁️ Conectat la Sheets';
-        badge.className = 'cursor-pointer text-[10px] px-2 py-0.5 rounded-full font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 whitespace-nowrap';
+        badge.className = 'cursor-pointer text-[10px] px-2 py-0.5 rounded-full font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 whitespace-nowrap shrink-0';
       } else {
         badge.textContent = '☁️ Local (Apasă pt. Cloud)';
-        badge.className = 'cursor-pointer text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-900 text-slate-400 border border-slate-700 whitespace-nowrap';
+        badge.className = 'cursor-pointer text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-900 text-slate-400 border border-slate-700 whitespace-nowrap shrink-0';
       }
     }
 
@@ -1024,11 +1062,65 @@
       return Math.round(parseNumInput(p) * 4 + parseNumInput(f) * 9 + parseNumInput(c) * 4);
     }
 
+    // Calculează totalul și valorile rămase în ziua selectată (pentru Tracker și Mini-Bară)
+    function computeDaySummary(targets) {
+      const dayEntries = state.entries.filter(e => e.date === state.currentDate);
+      let sumP = 0, sumF = 0, sumC = 0, sumKcal = 0;
+      dayEntries.forEach(e => {
+        sumP += Number(e.p) || 0;
+        sumF += Number(e.f) || 0;
+        sumC += Number(e.c) || 0;
+        sumKcal += calcKcal(e.p, e.f, e.c);
+      });
+      sumP = Number(sumP.toFixed(2));
+      sumF = Number(sumF.toFixed(2));
+      sumC = Number(sumC.toFixed(2));
+
+      const remKcal = Math.round(targets.targetKcal - sumKcal);
+      const remP = Number((targets.targetP - sumP).toFixed(1));
+      const remF = Number((targets.targetF - sumF).toFixed(1));
+      const remC = Number((targets.targetC - sumC).toFixed(1));
+
+      return { dayEntries, sumP, sumF, sumC, sumKcal, remKcal, remP, remF, remC };
+    }
+
+    // Actualizează mini-bara de status vizibilă în Bancă și Calc 100g
+    function renderMiniStatusBanner(targets) {
+      const bannerEl = document.getElementById('miniStatusBanner');
+      if (!bannerEl) return;
+
+      const showBanner = (activeTab === 'banca' || activeTab === 'calc100');
+      bannerEl.classList.toggle('hidden', !showBanner);
+      if (!showBanner) return;
+
+      const summary = computeDaySummary(targets);
+      document.getElementById('miniBannerDate').textContent = state.currentDate;
+
+      const fmtRemBadge = (remVal, unit, colorClass) => {
+        if (remVal >= 0) {
+          return `<span class="${colorClass}">${fmtComma(remVal)}${unit}</span>`;
+        }
+        return `<span class="text-rose-400 font-bold" title="Depășire">+${fmtComma(Math.abs(remVal))}${unit} ⚠️</span>`;
+      };
+
+      document.getElementById('miniBannerValues').innerHTML = `
+        <span>${fmtRemBadge(summary.remKcal, ' kcal', 'text-lime-400')}</span>
+        <span class="text-slate-700">|</span>
+        <span>P: ${fmtRemBadge(summary.remP, 'g', 'text-sky-400')}</span>
+        <span class="text-slate-700">•</span>
+        <span>G: ${fmtRemBadge(summary.remF, 'g', 'text-teal-400')}</span>
+        <span class="text-slate-700">•</span>
+        <span>C: ${fmtRemBadge(summary.remC, 'g', 'text-fuchsia-400')}</span>
+      `;
+    }
+
     // ==================== RANDARE UI SELECTIVĂ ====================
     function renderAll(forceAllTabs = false) {
       const targets = computeTargets();
       document.getElementById('headerSubtitle').textContent =
         `Țintă: ${fmtComma(targets.targetKcal)} kcal | P: ${fmtComma(targets.targetP)}g • G: ${fmtComma(targets.targetF)}g • C: ${fmtComma(targets.targetC)}g`;
+
+      renderMiniStatusBanner(targets);
 
       if (forceAllTabs || activeTab === 'tracker') {
         renderTrackerTab(targets);
@@ -1050,20 +1142,8 @@
       document.getElementById('tableDateLabel').textContent = state.currentDate;
       document.getElementById('addCardDateIndicator').textContent = state.currentDate;
 
-      const dayEntries = state.entries.filter(e => e.date === state.currentDate);
+      const { dayEntries, sumP, sumF, sumC, sumKcal } = computeDaySummary(targets);
       document.getElementById('dayEntriesCount').textContent = `${dayEntries.length} mese înregistrate`;
-
-      let sumP = 0, sumF = 0, sumC = 0, sumKcal = 0;
-      dayEntries.forEach(e => {
-        sumP += Number(e.p) || 0;
-        sumF += Number(e.f) || 0;
-        sumC += Number(e.c) || 0;
-        sumKcal += calcKcal(e.p, e.f, e.c);
-      });
-
-      sumP = Number(sumP.toFixed(2));
-      sumF = Number(sumF.toFixed(2));
-      sumC = Number(sumC.toFixed(2));
 
       updateMacroCard('Kcal', sumKcal, targets.targetKcal, '');
       updateMacroCard('P', sumP, targets.targetP, 'g');
@@ -1086,19 +1166,19 @@
             <tr class="hover:bg-slate-800/40 transition">
               <td class="py-2.5 px-3 sm:px-4 text-xs text-slate-500">${idx + 1}</td>
               <td class="py-2.5 px-3 sm:px-4 font-medium text-white">
-                <input type="text" value="${escapeHtml(item.name)}" onchange="updateEntryField('${item.id}', 'name', this.value)"
+                <input type="text" enterkeyhint="done" value="${escapeHtml(item.name)}" onchange="updateEntryField('${item.id}', 'name', this.value)"
                   class="bg-transparent border-b border-transparent hover:border-slate-700 focus:border-indigo-500 focus:bg-slate-950 px-1 py-0.5 rounded w-full min-w-[140px] text-white focus:outline-none" />
               </td>
               <td class="py-2.5 px-2 sm:px-3 text-right">
-                <input type="text" inputmode="decimal" value="${fmtComma(item.p)}" onchange="updateEntryField('${item.id}', 'p', this.value)"
+                <input type="text" inputmode="decimal" enterkeyhint="done" onfocus="this.select()" value="${fmtComma(item.p)}" onchange="updateEntryField('${item.id}', 'p', this.value)"
                   class="bg-transparent border-b border-transparent hover:border-slate-700 focus:border-sky-400 focus:bg-slate-950 px-1 py-0.5 rounded w-14 sm:w-20 text-right text-sky-300 focus:outline-none tabular-nums" />
               </td>
               <td class="py-2.5 px-2 sm:px-3 text-right">
-                <input type="text" inputmode="decimal" value="${fmtComma(item.f)}" onchange="updateEntryField('${item.id}', 'f', this.value)"
+                <input type="text" inputmode="decimal" enterkeyhint="done" onfocus="this.select()" value="${fmtComma(item.f)}" onchange="updateEntryField('${item.id}', 'f', this.value)"
                   class="bg-transparent border-b border-transparent hover:border-slate-700 focus:border-teal-400 focus:bg-slate-950 px-1 py-0.5 rounded w-14 sm:w-20 text-right text-teal-300 focus:outline-none tabular-nums" />
               </td>
               <td class="py-2.5 px-2 sm:px-3 text-right">
-                <input type="text" inputmode="decimal" value="${fmtComma(item.c)}" onchange="updateEntryField('${item.id}', 'c', this.value)"
+                <input type="text" inputmode="decimal" enterkeyhint="done" onfocus="this.select()" value="${fmtComma(item.c)}" onchange="updateEntryField('${item.id}', 'c', this.value)"
                   class="bg-transparent border-b border-transparent hover:border-slate-700 focus:border-fuchsia-400 focus:bg-slate-950 px-1 py-0.5 rounded w-14 sm:w-20 text-right text-fuchsia-300 focus:outline-none tabular-nums" />
               </td>
               <td class="py-2.5 px-2 sm:px-3 text-right font-bold text-lime-400 tabular-nums">${k}</td>
@@ -1111,54 +1191,50 @@
           `;
         }).join('');
 
-        // 2. Randare Carduri Compacte pentru Mobil (< 640px)
+        // 2. Randare Carduri Compacte pe 2 Rânduri pentru Mobil (< 640px)
         mobileBody.innerHTML = dayEntries.map((item, idx) => {
           const k = calcKcal(item.p, item.f, item.c);
           const isConfirming = (pendingDelete.type === 'entry' && String(pendingDelete.id) === String(item.id));
           return `
-            <div class="p-3 space-y-2 hover:bg-slate-900/40 transition tabular-nums">
-              <!-- Rândul 1: # + Nume Masă (pe toată lățimea, afișat integral) -->
-              <div class="flex items-start gap-1.5">
-                <span class="text-[11px] font-bold text-slate-500 shrink-0 mt-1">#${idx + 1}</span>
-                <div contenteditable="true"
-                  onblur="updateEntryField('${item.id}', 'name', this.innerText.trim())"
-                  onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
-                  class="flex-1 min-w-0 bg-transparent border-b border-transparent focus:border-indigo-500 focus:bg-slate-950 px-1 py-0.5 rounded text-sm font-semibold text-white focus:outline-none break-words leading-snug">${escapeHtml(item.name)}</div>
-              </div>
-              <!-- Rândul 2: Calorii + Butoane Acțiuni -->
+            <div class="p-2.5 space-y-1.5 hover:bg-slate-900/40 transition tabular-nums">
+              <!-- Rândul 1: # + Nume Masă (stânga, flex-1) + Badge Kcal (dreapta, aliniat sus) -->
               <div class="flex items-center justify-between gap-2">
-                <span class="text-xs font-extrabold text-lime-400 bg-lime-500/10 border border-lime-500/25 px-2.5 py-0.5 rounded-lg shrink-0">${k} kcal</span>
-                <div class="flex items-center gap-1.5 shrink-0">
-                  <button onclick="duplicateEntry('${item.id}')" title="Duplică" class="text-xs px-2.5 py-1 rounded-lg bg-slate-850 border border-slate-700/70 text-indigo-300 active:scale-95">➕</button>
-                  <button onclick="saveEntryToBank('${item.id}')" title="Salvează în Bancă" class="text-xs px-2.5 py-1 rounded-lg bg-slate-850 border border-slate-700/70 text-slate-300 active:scale-95">🏦</button>
-                  <button onclick="requestDeleteEntry('${item.id}')" title="Șterge" class="text-xs rounded-lg transition active:scale-95 ${isConfirming ? 'px-2.5 py-1 bg-rose-600 text-white font-bold ring-2 ring-rose-400/60' : 'px-2.5 py-1 bg-rose-950/60 border border-rose-800/40 text-rose-300'}">${isConfirming ? 'Sigur?' : '✕'}</button>
+                <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                  <span class="text-[11px] font-bold text-slate-500 shrink-0">#${idx + 1}</span>
+                  <input type="text" enterkeyhint="done" value="${escapeHtml(item.name)}"
+                    onchange="updateEntryField('${item.id}', 'name', this.value.trim())"
+                    class="w-full min-w-0 bg-transparent border-b border-transparent focus:border-indigo-500 focus:bg-slate-950 px-1 py-0.5 rounded text-xs font-semibold text-white focus:outline-none truncate" />
                 </div>
+                <span class="text-[11px] font-extrabold text-lime-400 bg-lime-500/10 border border-lime-500/25 px-2 py-0.5 rounded-lg shrink-0">${k} kcal</span>
               </div>
-              <!-- Rândul 2: Cele 3 valori editabile P, G, C -->
-              <div class="grid grid-cols-3 gap-2 pt-0.5">
-                <div class="flex items-center justify-between bg-slate-950/80 border border-slate-800/90 focus-within:border-sky-400/70 rounded-xl px-2.5 py-1.5">
-                  <span class="text-[11px] font-semibold text-sky-400">P</span>
-                  <div class="flex items-center gap-0.5">
-                    <input type="text" inputmode="decimal" value="${fmtComma(item.p)}" onchange="updateEntryField('${item.id}', 'p', this.value)"
-                      class="w-12 bg-transparent text-right text-xs font-bold text-sky-200 focus:outline-none" />
-                    <span class="text-[10px] text-slate-500">g</span>
+
+              <!-- Rândul 2: Cele 3 input-uri compacte P / G / C (stânga, ~70%) + Butoane Acțiuni (dreapta) -->
+              <div class="flex items-center justify-between gap-2">
+                <div class="grid grid-cols-3 gap-1.5 flex-1 min-w-0">
+                  <div class="flex items-center justify-between bg-slate-950/80 border border-slate-800/90 focus-within:border-sky-400/70 rounded-lg px-2 py-1">
+                    <span class="text-[10px] font-semibold text-sky-400 mr-1">P</span>
+                    <input type="text" inputmode="decimal" enterkeyhint="done" onfocus="this.select()" value="${fmtComma(item.p)}"
+                      onchange="updateEntryField('${item.id}', 'p', this.value)"
+                      class="w-full min-w-0 bg-transparent text-right text-xs font-bold text-sky-200 focus:outline-none" />
+                  </div>
+                  <div class="flex items-center justify-between bg-slate-950/80 border border-slate-800/90 focus-within:border-teal-400/70 rounded-lg px-2 py-1">
+                    <span class="text-[10px] font-semibold text-teal-400 mr-1">G</span>
+                    <input type="text" inputmode="decimal" enterkeyhint="done" onfocus="this.select()" value="${fmtComma(item.f)}"
+                      onchange="updateEntryField('${item.id}', 'f', this.value)"
+                      class="w-full min-w-0 bg-transparent text-right text-xs font-bold text-teal-200 focus:outline-none" />
+                  </div>
+                  <div class="flex items-center justify-between bg-slate-950/80 border border-slate-800/90 focus-within:border-fuchsia-400/70 rounded-lg px-2 py-1">
+                    <span class="text-[10px] font-semibold text-fuchsia-400 mr-1">C</span>
+                    <input type="text" inputmode="decimal" enterkeyhint="done" onfocus="this.select()" value="${fmtComma(item.c)}"
+                      onchange="updateEntryField('${item.id}', 'c', this.value)"
+                      class="w-full min-w-0 bg-transparent text-right text-xs font-bold text-fuchsia-200 focus:outline-none" />
                   </div>
                 </div>
-                <div class="flex items-center justify-between bg-slate-950/80 border border-slate-800/90 focus-within:border-teal-400/70 rounded-xl px-2.5 py-1.5">
-                  <span class="text-[11px] font-semibold text-teal-400">G</span>
-                  <div class="flex items-center gap-0.5">
-                    <input type="text" inputmode="decimal" value="${fmtComma(item.f)}" onchange="updateEntryField('${item.id}', 'f', this.value)"
-                      class="w-12 bg-transparent text-right text-xs font-bold text-teal-200 focus:outline-none" />
-                    <span class="text-[10px] text-slate-500">g</span>
-                  </div>
-                </div>
-                <div class="flex items-center justify-between bg-slate-950/80 border border-slate-800/90 focus-within:border-fuchsia-400/70 rounded-xl px-2.5 py-1.5">
-                  <span class="text-[11px] font-semibold text-fuchsia-400">C</span>
-                  <div class="flex items-center gap-0.5">
-                    <input type="text" inputmode="decimal" value="${fmtComma(item.c)}" onchange="updateEntryField('${item.id}', 'c', this.value)"
-                      class="w-12 bg-transparent text-right text-xs font-bold text-fuchsia-200 focus:outline-none" />
-                    <span class="text-[10px] text-slate-500">g</span>
-                  </div>
+
+                <div class="flex items-center gap-1 shrink-0">
+                  <button onclick="duplicateEntry('${item.id}')" title="Duplică" class="text-xs px-2 py-1 rounded-lg bg-slate-850 border border-slate-700/70 text-indigo-300 active:scale-95">➕</button>
+                  <button onclick="saveEntryToBank('${item.id}')" title="Salvează în Bancă" class="text-xs px-2 py-1 rounded-lg bg-slate-850 border border-slate-700/70 text-slate-300 active:scale-95">🏦</button>
+                  <button onclick="requestDeleteEntry('${item.id}')" title="Șterge" class="text-xs rounded-lg transition active:scale-95 ${isConfirming ? 'px-2 py-1 bg-rose-600 text-white font-bold ring-2 ring-rose-400/60' : 'px-2 py-1 bg-rose-950/60 border border-rose-800/40 text-rose-300'}">${isConfirming ? 'Sigur?' : '✕'}</button>
                 </div>
               </div>
             </div>
@@ -1250,7 +1326,7 @@
       }
     }
 
-    // ==================== RATE DE ADERENȚĂ (7 ZILE COMPLETE) & AUTOCOMPLETE ====================
+    // ==================== RATE DE ADERENȚĂ (7 ZILE COMPLETE) & AUTOCOMPLETE UNIFICAT ====================
     function getDailyAggregates() {
       const map = {};
       state.entries.forEach(e => {
@@ -1289,14 +1365,37 @@
       }
     }
 
+    // Autocomplete unificat: include atât Banca de Alimente, cât și Calc 100g
     function renderDatalistAndTopChips() {
-      const sorted = [...state.foodBank].sort((a, b) => (b.freq || 0) - (a.freq || 0));
       const datalistEl = document.getElementById('foodBankDatalist');
-      if (datalistEl) {
-        datalistEl.innerHTML = sorted.map(item =>
-          `<option value="${escapeHtml(item.name)}">P:${fmtComma(item.p)}g | G:${fmtComma(item.f)}g | C:${fmtComma(item.c)}g (${calcKcal(item.p, item.f, item.c)} kcal)</option>`
-        ).join('');
-      }
+      if (!datalistEl) return;
+
+      const sortedBank = [...state.foodBank].sort((a, b) => (b.freq || 0) - (a.freq || 0));
+      const sorted100 = [...state.foods100g].sort((a, b) => (b.freq || 0) - (a.freq || 0));
+
+      const seenNames = new Set();
+      const optionsHtml = [];
+
+      sortedBank.forEach(item => {
+        const key = item.name.trim().toLowerCase();
+        seenNames.add(key);
+        optionsHtml.push(
+          `<option value="${escapeHtml(item.name)}">🏦 P:${fmtComma(item.p)}g | G:${fmtComma(item.f)}g | C:${fmtComma(item.c)}g (${calcKcal(item.p, item.f, item.c)} kcal)</option>`
+        );
+      });
+
+      sorted100.forEach(item => {
+        const display100Name = formatScaledMealName(item.name, 100);
+        const key = display100Name.trim().toLowerCase();
+        if (!seenNames.has(key)) {
+          seenNames.add(key);
+          optionsHtml.push(
+            `<option value="${escapeHtml(display100Name)}">⚖️ [100g] P:${fmtComma(item.p)}g | G:${fmtComma(item.f)}g | C:${fmtComma(item.c)}g (${calcKcal(item.p, item.f, item.c)} kcal)</option>`
+          );
+        }
+      });
+
+      datalistEl.innerHTML = optionsHtml.join('');
     }
 
     // ==================== TAB 2: BANCĂ DE ALIMENTE (PORȚII FIXE, FĂRĂ SCALARE) ====================
@@ -1532,6 +1631,8 @@
                     <input
                       type="text"
                       inputmode="decimal"
+                      enterkeyhint="done"
+                      onfocus="this.select()"
                       id="calc100GramInput_${item.id}"
                       value="${fmtComma(currentGrams)}"
                       oninput="onCalc100CardGramInput('${item.id}', this.value)"
@@ -1625,10 +1726,12 @@
         });
         markDirty('entries');
         saveState(false);
+        renderDatalistAndTopChips();
         renderAll();
         showToast(`Adăugat în ${state.currentDate}: ${finalName}`);
       } else {
         saveState(true);
+        renderDatalistAndTopChips();
         switchTab('tracker');
         document.getElementById('inputMealName').value = finalName;
         document.getElementById('inputMealP').value = fmtComma(scaled.p);
@@ -1716,6 +1819,7 @@
 
       markDirty('foods100g');
       saveState(false);
+      renderDatalistAndTopChips();
       renderAll();
     }
 
@@ -1757,13 +1861,32 @@
       document.getElementById('outTargetC').textContent = `${fmtComma(t.targetC)}g`;
     }
 
-    // ==================== FORMULAR TRACKER & AUTOCOMPLETE ====================
+    // ==================== FORMULAR TRACKER & AUTOCOMPLETE UNIFICAT ====================
     function onMealNameInput(val) {
-      const match = state.foodBank.find(b => b.name.toLowerCase() === val.trim().toLowerCase());
-      if (match) {
-        document.getElementById('inputMealP').value = fmtComma(Number(match.p) || 0);
-        document.getElementById('inputMealF').value = fmtComma(Number(match.f) || 0);
-        document.getElementById('inputMealC').value = fmtComma(Number(match.c) || 0);
+      const cleanVal = val.trim().toLowerCase();
+      if (!cleanVal) return;
+
+      // 1. Caută în Banca de Alimente (porții fixe)
+      const bankMatch = state.foodBank.find(b => b.name.trim().toLowerCase() === cleanVal);
+      if (bankMatch) {
+        document.getElementById('inputMealP').value = fmtComma(Number(bankMatch.p) || 0);
+        document.getElementById('inputMealF').value = fmtComma(Number(bankMatch.f) || 0);
+        document.getElementById('inputMealC').value = fmtComma(Number(bankMatch.c) || 0);
+        updateLiveKcalPreview();
+        return;
+      }
+
+      // 2. Caută în Calc 100g (fie numele simplu, fie cu sufixul "(100g)")
+      const calc100Match = state.foods100g.find(item => {
+        const baseLower = item.name.trim().toLowerCase();
+        const scaled100Lower = formatScaledMealName(item.name, 100).trim().toLowerCase();
+        return baseLower === cleanVal || scaled100Lower === cleanVal;
+      });
+
+      if (calc100Match) {
+        document.getElementById('inputMealP').value = fmtComma(Number(calc100Match.p) || 0);
+        document.getElementById('inputMealF').value = fmtComma(Number(calc100Match.f) || 0);
+        document.getElementById('inputMealC').value = fmtComma(Number(calc100Match.c) || 0);
         updateLiveKcalPreview();
       }
     }
@@ -1780,11 +1903,21 @@
       activeTab = tab;
       ['tracker', 'banca', 'calc100', 'date'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
+
+        // Butoane Nav Desktop
         const btn = document.getElementById(`tabBtn-${t}`);
         if (btn) {
           btn.className = t === tab
             ? 'px-3 py-1.5 rounded-lg font-semibold btn-cyber text-white shadow-sm shadow-indigo-950/80 whitespace-nowrap'
             : 'px-3 py-1.5 rounded-lg font-medium transition text-slate-400 hover:text-white whitespace-nowrap';
+        }
+
+        // Butoane Bottom Nav Mobil
+        const mobBtn = document.getElementById(`mobTabBtn-${t}`);
+        if (mobBtn) {
+          mobBtn.className = t === tab
+            ? 'flex flex-col items-center justify-center py-1.5 px-1 rounded-xl font-semibold btn-cyber text-white shadow-sm shadow-indigo-950/80'
+            : 'flex flex-col items-center justify-center py-1.5 px-1 rounded-xl font-medium text-slate-400 hover:text-white transition';
         }
       });
       renderAll();
@@ -1970,6 +2103,7 @@
       lastDeletedRecord = { type: 'calc100', item: removed, index: idx };
       markDirty('foods100g');
       saveState(false);
+      renderDatalistAndTopChips();
       renderAll();
       showToast(`Șters din Calc 100g: ${removed.name}`, true);
     }
@@ -1987,6 +2121,7 @@
       } else if (type === 'calc100') {
         state.foods100g.splice(index, 0, item);
         markDirty('foods100g');
+        renderDatalistAndTopChips();
       }
       lastDeletedRecord = null;
       saveState(false);
